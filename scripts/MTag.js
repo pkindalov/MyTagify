@@ -56,7 +56,11 @@
 		tag.innerText = text;
 	};
 	const isObject = (data) => data && typeof data === 'object' && data.constructor === Object;
-	const ifZeroAttributes = (attributes) => Object.keys(attributes).length === 0;
+	const getObjectKeysCount = (obj) => {
+		if (!isObject(obj)) errThrower('Wrong type. Expect an object, not an array or something else.');
+		return Object.keys(obj).length;
+	};
+	const ifZeroAttributes = (attributes) => getObjectKeysCount(attributes) === 0;
 	const addAttrToTag = (attrs) => {
 		Object.keys(attrs).forEach((attribute) => {
 			if (showWarnings && !tagsInfo[currentlyCreatedTagName]['attributes'][attribute]) {
@@ -124,7 +128,7 @@
 
 	function setTagEvents(events) {
 		if (!isObject(events)) errThrower('events must be object');
-		if (Object.keys(events).length === 0) return;
+		if (getObjectKeysCount(events) === 0) return;
 		if (!events['eventName']) errThrower('missing eventName property in events object');
 		if (events['eventName'].length === 0) return;
 		for (let i = 0; i < events['eventName'].length; i++) {
