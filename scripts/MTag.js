@@ -47,9 +47,9 @@
 	};
 	const showErrMsgOnConsole = (e) => {
 		const [ , lineno, colno ] = e.stack.match(/(\d+):(\d+)/);
-		console.log('Line:', lineno);
-		console.log('Column:', colno);
-		console.log(e.message);
+		console.log('%c Line: ' + lineno, 'background: red');
+		console.log('%c Column: ' + colno, 'background: red');
+		console.log('%c ' + e.message, 'background: red');
 	};
 	const setTagText = (text) => {
 		if (!text) errThrower('Text cannot be invalid value. Error on line 19');
@@ -69,11 +69,13 @@
 			tag.setAttribute(attribute, attrs[attribute]);
 		});
 	};
-	const showWarningMsgOnConsole = (msg) => console.log(msg);
-	const isVariableExists = (variable) => typeof variable !== undefined;
-	// const setWarnings = (turnOnOff) => {
-
-	// };
+	const showWarningMsgOnConsole = (msg) => console.log('%c ' + msg, 'background: yellow;');
+	const isVariableExists = (variable) => typeof variable !== undefined || variable === null;
+	const setWarnings = (turnOnOff) => {
+	 	if(isVariableExists(turnOnOff)) {
+			 showWarnings = turnOnOff;
+		 }
+	};
 
 	//bigger functions
 	function initializeMainSettings(config) {
@@ -127,9 +129,10 @@
 				showErrMsgOnConsole(e);
 			}
 		},
-		// enableWarningMsg: function(turnOnOff) {
-		// 	setWarnings(turnOnOff);
-		// },
+		enableWarningMsg: function(turnOnOff) {
+			setWarnings(turnOnOff);
+			return this;
+		},
 		appendToBody: function() {
 			try {
 				const body = document.getElementsByTagName('body')[0];

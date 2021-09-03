@@ -13,20 +13,18 @@
 <script>
     const smallTestFunc = (event) => event.target.setAttribute('href', 'http://sportal.bg');
     const focusTestFunct = () => console.log('focused');
-    const mtag = MTag({isWarningsOn: false});
-    // const link = mtag.create({
-    //     tagName: 'a',
-    //     tagAttr: {},
-    //     text: 'Просто линк',
-    //     events: {eventName: '', eventFunct: ''}
-    // }).appendTo();
-    mtag.create({
+    // const mtag = MTag({isWarningsOn: false});
+    const mtag = MTag();
+    mtag
+    // .enableWarningMsg(false)
+    .create({
         tagName: 'a',
         tagAttr: {href: 'http://graphicsandphotos.com/', target: 'blank', 
                   class: 'btn btn-primary', id: 'my web', 'data-target': 'mypage'},
         text: 'My Web',
         events: {eventName: ['onclick', 'onfocus'], eventFunct: [smallTestFunc, focusTestFunct]},
         inlineCSSstyles: {}
-    }).appendToBody();
+    })
+    .appendToBody();
 </script>
 </html>
