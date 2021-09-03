@@ -51,8 +51,8 @@
 		console.log('%c Column: ' + colno, 'background: red');
 		console.log('%c ' + e.message, 'background: red');
 	};
-	const setTagText = (text) => {
-		if (!text) errThrower('Text cannot be invalid value. Error on line 19');
+	const setTagText = (text = null) => {
+		if (!text) errThrower('Text cannot be invalid value.');
 		tag.innerText = text;
 	};
 	const isObject = (data) => data && typeof data === 'object' && data.constructor === Object;
@@ -103,30 +103,39 @@
 		showWarnings = isVariableExists(isWarningsOn) && isWarningsOn ? true : isWarningsOn;
 	}
 
-	function createNewTag(config) {
+	function createNewTag(element) {
 		try {
-			if (!config) errThrower('Invalid config');
-			const { tagName, tagAttr, text, events } = config;
-			if (!tagName) errThrower('Invalid name of tag.');
-			tag = document.createElement(tagName);
-			currentlyCreatedTagName = tagName;
-			setTagText(text);
-			setTagAttr(tagAttr);
-			setTagEvents(events);
-			checkBrowserCompatibility(tagName);
+			//element can be config object or just a string
+			if (!element) errThrower('Invalid config');
+			if (isObject(element)) {
+				const { tagName, tagAttr, text, events, inlineCSSstyles } = element;
+				if (!tagName) errThrower('Invalid name of tag.');
+				tag = document.createElement(tagName);
+				currentlyCreatedTagName = tagName;
+				checkBrowserCompatibility(currentlyCreatedTagName);
+				if (text) setTagText(text);
+				if (tagAttr) setTagAttr(tagAttr);
+				if (events) setTagEvents(events);
+				if (inlineCSSstyles) addInlineStyles(inlineCSSstyles);
+				return;
+			}
+			if (!element) errThrower('Invalid name of tag.');
+			tag = document.createElement(element);
+			currentlyCreatedTagName = element;
+			checkBrowserCompatibility(currentlyCreatedTagName);
 		} catch (e) {
 			showErrMsgOnConsole(e);
 		}
 	}
 
-	function setTagAttr(attributes) {
+	function setTagAttr(attributes = null) {
 		if (!attributes) errThrower('Invalid attributes for the tag.');
 		if (!isObject(attributes)) errThrower('Attributes must be an object. Not Array, but an object.');
 		if (ifZeroAttributes(attributes)) return;
 		addAttrToTag(attributes);
 	}
 
-	function setTagEvents(events) {
+	function setTagEvents(events = null) {
 		if (!isObject(events)) errThrower('events must be object');
 		if (getObjectKeysCount(events) === 0) return;
 		if (!events['eventName']) errThrower('missing eventName property in events object');
@@ -138,6 +147,10 @@
 				tag[eventName] = eventFunc;
 			}
 		}
+	}
+
+	function addInlineStyles(inlineStyles = null) {
+		if (!isObject(inlineStyles)) errThrower('styles must be object');
 	}
 
 	function appendTagToHtmlBody() {
@@ -163,6 +176,14 @@
 		},
 		appendToBody: function() {
 			appendTagToHtmlBody();
+			return this;
+		},
+		addText: function(text) {
+			setTagText(text);
+			return this;
+		},
+		addAttributes: function(attributes) {
+			setTagAttr(attributes);
 			return this;
 		}
 	};
