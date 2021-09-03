@@ -1,14 +1,45 @@
 (function(global) {
 	//returning new function constructor
-	var MTag = function() {
-		return new MTag.init();
+	var MTag = function(config = null) {
+		return new MTag.init(config);
 	};
 
 	//here you can declare data not visible for the outer world because of the closure which hide it.
 	//different information about tags.
-	const tagsInfo = {};
+	const tagsInfo = {
+		a: {
+			attributes: {
+				href: true,
+				name: true,
+				rel: true,
+				rev: true,
+				target: true,
+				id: true,
+				class: true,
+				style: true,
+				title: true
+			},
+			events: {
+				onfocus: true,
+				onblur: true,
+				onclick: true,
+				ondblclick: true,
+				onkeydown: true,
+				onkeypress: true,
+				onkeyup: true,
+				onmousedown: true,
+				onmouseout: true,
+				onmousemove: true,
+				onmouseover: true,
+				onmouseup: true
+			},
+			compatibility: { allBrowsers: true, msg: '' }
+		}
+	};
 
 	let tag = null;
+	let currentlyCreatedTagName = null;
+	let showWarnings = null;
 
 	//small arrow functions
 	const errThrower = (msg) => {
@@ -28,28 +59,50 @@
 	const ifZeroAttributes = (attributes) => Object.keys(attributes).length === 0;
 	const addAttrToTag = (attrs) => {
 		Object.keys(attrs).forEach((attribute) => {
+			if (showWarnings && !tagsInfo[currentlyCreatedTagName]['attributes'][attribute]) {
+				// const warnMsg = '<' + currentlyCreatedTagName + "> is not a standart " + attribute + ' attribute.';
+				const warnMsg =
+					attribute + ' is not a standart attribute for ' + '<' + currentlyCreatedTagName + '> tag';
+				showWarningMsgOnConsole(warnMsg);
+				// return;
+			}
 			tag.setAttribute(attribute, attrs[attribute]);
 		});
 	};
+	const showWarningMsgOnConsole = (msg) => console.log(msg);
+	const isVariableExists = (variable) => typeof variable !== undefined;
+	// const setWarnings = (turnOnOff) => {
+
+	// };
 
 	//bigger functions
+	function initializeMainSettings(config) {
+		if (!config) {
+			config = {
+				isWarningsOn: true
+			};
+		}
+
+		const { isWarningsOn } = config;
+		//check if the variable exists and if its value is true
+		showWarnings = isVariableExists(isWarningsOn) && isWarningsOn ? true : isWarningsOn;
+	}
+
 	function setTagAttr(attributes) {
-		if (!attributes) errThrower('Invalid attributes for the tag. Error on line 25');
-		if (!isObject(attributes))
-			errThrower('Attributes must be an object. Not Array, but an object. Error on line 27');
+		if (!attributes) errThrower('Invalid attributes for the tag.');
+		if (!isObject(attributes)) errThrower('Attributes must be an object. Not Array, but an object.');
 		if (ifZeroAttributes(attributes)) return;
 		addAttrToTag(attributes);
 	}
 
 	function setTagEvents(events) {
-		if(!isObject(events)) errThrower('events must be object');
-		if(Object.keys(events).length === 0) return;
-		if(!events['eventName']) errThrower('missing eventName property in events object');
-		if(events['eventName'].length === 0) return;
+		if (!isObject(events)) errThrower('events must be object');
+		if (Object.keys(events).length === 0) return;
+		if (!events['eventName']) errThrower('missing eventName property in events object');
+		if (events['eventName'].length === 0) return;
 		for (let i = 0; i < events['eventName'].length; i++) {
 			const eventName = events['eventName'][i];
-			if(events['eventFunct'][i]){
-				console.log(1);
+			if (events['eventFunct'][i]) {
 				const eventFunc = events['eventFunct'][i];
 				tag[eventName] = eventFunc;
 			}
@@ -64,14 +117,19 @@
 				const { tagName, tagAttr, text, events } = config;
 				if (!tagName) errThrower('Invalid name of tag.');
 				tag = document.createElement(tagName);
+				currentlyCreatedTagName = tagName;
 				setTagText(text);
 				setTagAttr(tagAttr);
 				setTagEvents(events);
+				// checkBrowserCompatibility(tagName);
 				return this;
 			} catch (e) {
 				showErrMsgOnConsole(e);
 			}
 		},
+		// enableWarningMsg: function(turnOnOff) {
+		// 	setWarnings(turnOnOff);
+		// },
 		appendToBody: function() {
 			try {
 				const body = document.getElementsByTagName('body')[0];
@@ -85,11 +143,8 @@
 	};
 
 	//In function constructor we initialize here all needed variables if there are any.
-	MTag.init = function() {
-		const that = this;
-
-		//if you wish to use custome methods here from prototype you can do by the following way
-		// that.create(config);
+	MTag.init = function(config = null) {
+		initializeMainSettings(config);
 	};
 
 	MTag.init.prototype = MTag.prototype;
