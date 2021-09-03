@@ -90,6 +90,11 @@
 		return true;
 	};
 
+	const createTagFromString = (str) => {
+		tag = document.createElement(str);
+		currentlyCreatedTagName = str;
+	};
+
 	//bigger functions
 	function initializeMainSettings(config) {
 		if (!config) {
@@ -103,25 +108,28 @@
 		showWarnings = isVariableExists(isWarningsOn) && isWarningsOn ? true : isWarningsOn;
 	}
 
+	function createTagByConfig(config) {
+		const { tagName, tagAttr, text, events, inlineCSSstyles } = config;
+		if (!tagName) errThrower('Invalid name of tag.');
+		tag = document.createElement(tagName);
+		currentlyCreatedTagName = tagName;
+		checkBrowserCompatibility(currentlyCreatedTagName);
+		if (text) setTagText(text);
+		if (tagAttr) setTagAttr(tagAttr);
+		if (events) setTagEvents(events);
+		if (inlineCSSstyles) addInlineStyles(inlineCSSstyles);
+	}
+
 	function createNewTag(element) {
 		try {
 			//element can be config object or just a string
 			if (!element) errThrower('Invalid config');
 			if (isObject(element)) {
-				const { tagName, tagAttr, text, events, inlineCSSstyles } = element;
-				if (!tagName) errThrower('Invalid name of tag.');
-				tag = document.createElement(tagName);
-				currentlyCreatedTagName = tagName;
-				checkBrowserCompatibility(currentlyCreatedTagName);
-				if (text) setTagText(text);
-				if (tagAttr) setTagAttr(tagAttr);
-				if (events) setTagEvents(events);
-				if (inlineCSSstyles) addInlineStyles(inlineCSSstyles);
+				createTagByConfig(element);
 				return;
 			}
 			if (!element) errThrower('Invalid name of tag.');
-			tag = document.createElement(element);
-			currentlyCreatedTagName = element;
+			createTagFromString(element);
 			checkBrowserCompatibility(currentlyCreatedTagName);
 		} catch (e) {
 			showErrMsgOnConsole(e);
@@ -138,15 +146,9 @@
 	function setTagEvents(events = null) {
 		if (!isObject(events)) errThrower('events must be object');
 		if (getObjectKeysCount(events) === 0) return;
-		if (!events['eventName']) errThrower('missing eventName property in events object');
-		if (events['eventName'].length === 0) return;
-		for (let i = 0; i < events['eventName'].length; i++) {
-			const eventName = events['eventName'][i];
-			if (events['eventFunct'][i]) {
-				const eventFunc = events['eventFunct'][i];
-				tag[eventName] = eventFunc;
-			}
-		}
+		Object.keys(events).forEach((event) => {
+			tag[event] = events[event];
+		});
 	}
 
 	function addInlineStyles(inlineStyles = null) {
@@ -184,6 +186,10 @@
 		},
 		addAttributes: function(attributes) {
 			setTagAttr(attributes);
+			return this;
+		},
+		addEvents: function(events) {
+			setTagEvents(events);
 			return this;
 		}
 	};
