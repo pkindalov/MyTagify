@@ -19,8 +19,9 @@
         .enableWarningMsg(true)
         .create('a')
         .addText('rrrr')
-        .addAttributes({href: 'http://graphicsandphotos.com/', class: 'btn btn-primary', target: '_blank'})
-        .addEvents({'onclick': smallTestFunc, 'onfocus': focusTestFunct})
+        .addHref('http://graphicsandphotos.com/')
+        // .addAttributes({href: 'http://graphicsandphotos.com/', class: 'btn btn-primary', target: '_blank'})
+        // .addEvents({'onclick': smallTestFunc, 'onfocus': focusTestFunct})
         .appendToBody();
 
     // mtag

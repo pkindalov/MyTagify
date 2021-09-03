@@ -42,9 +42,6 @@
 	let showWarnings = null;
 
 	//small arrow functions
-	const errThrower = (msg) => {
-		throw Error(msg);
-	};
 	const showErrMsgOnConsole = (e) => {
 		const [ , lineno, colno ] = e.stack.match(/(\d+):(\d+)/);
 		console.log('%c Line: ' + lineno, 'background: red');
@@ -52,12 +49,12 @@
 		console.log('%c ' + e.message, 'background: red');
 	};
 	const setTagText = (text = null) => {
-		if (!text) errThrower('Text cannot be invalid value.');
+		if (!text) throw Error('Text cannot be invalid value.');
 		tag.innerText = text;
 	};
 	const isObject = (data) => data && typeof data === 'object' && data.constructor === Object;
 	const getObjectKeysCount = (obj) => {
-		if (!isObject(obj)) errThrower('Wrong type. Expect an object, not an array or something else.');
+		if (!isObject(obj)) throw Error('Wrong type. Expect an object, not an array or something else.');
 		return Object.keys(obj).length;
 	};
 	const ifZeroAttributes = (attributes) => getObjectKeysCount(attributes) === 0;
@@ -110,7 +107,7 @@
 
 	function createTagByConfig(config) {
 		const { tagName, tagAttr, text, events, inlineCSSstyles } = config;
-		if (!tagName) errThrower('Invalid name of tag.');
+		if (!tagName) throw Error('Invalid name of tag.');
 		tag = document.createElement(tagName);
 		currentlyCreatedTagName = tagName;
 		checkBrowserCompatibility(currentlyCreatedTagName);
@@ -123,12 +120,12 @@
 	function createNewTag(element) {
 		try {
 			//element can be config object or just a string
-			if (!element) errThrower('Invalid config');
+			if (!element) throw Error('Invalid config');
 			if (isObject(element)) {
 				createTagByConfig(element);
 				return;
 			}
-			if (!element) errThrower('Invalid name of tag.');
+			if (!element) throw Error('Invalid name of tag.');
 			createTagFromString(element);
 			checkBrowserCompatibility(currentlyCreatedTagName);
 		} catch (e) {
@@ -137,28 +134,33 @@
 	}
 
 	function setTagAttr(attributes = null) {
-		if (!attributes) errThrower('Invalid attributes for the tag.');
-		if (!isObject(attributes)) errThrower('Attributes must be an object. Not Array, but an object.');
+		if (!attributes) throw Error('Invalid attributes for the tag.');
+		if (!isObject(attributes)) throw Error('Attributes must be an object. Not Array, but an object.');
 		if (ifZeroAttributes(attributes)) return;
 		addAttrToTag(attributes);
 	}
 
 	function setTagEvents(events = null) {
-		if (!isObject(events)) errThrower('events must be object');
+		if (!isObject(events)) throw Error('events must be object');
 		if (getObjectKeysCount(events) === 0) return;
 		Object.keys(events).forEach((event) => {
 			tag[event] = events[event];
 		});
 	}
 
+	function setHref(url = null) {
+		if (!url) throw Error('Invalid url.');
+		tag.setAttribute('href', url);
+	}
+
 	function addInlineStyles(inlineStyles = null) {
-		if (!isObject(inlineStyles)) errThrower('styles must be object');
+		if (!isObject(inlineStyles)) throw Error('styles must be object');
 	}
 
 	function appendTagToHtmlBody() {
 		try {
 			const body = document.getElementsByTagName('body')[0];
-			if (!body) errThrower('Body tag not found.');
+			if (!body) throw Error('Body tag not found.');
 			body.appendChild(tag);
 			return this;
 		} catch (e) {
@@ -169,28 +171,60 @@
 	//Setting prototype(don't confuse with __proto__ - the prototype of the function. Prototype here point to the function constructor) to be empty object. It contain all custom methods of cutomst library.
 	MTag.prototype = {
 		create: function(config) {
-			createNewTag(config);
-			return this;
+			try {
+				createNewTag(config);
+				return this;
+			} catch (e) {
+				showErrMsgOnConsole(e);
+			}
 		},
 		enableWarningMsg: function(turnOnOff) {
-			setWarnings(turnOnOff);
-			return this;
+			try {
+				setWarnings(turnOnOff);
+				return this;
+			} catch (e) {
+				showErrMsgOnConsole(e);
+			}
 		},
 		appendToBody: function() {
-			appendTagToHtmlBody();
-			return this;
+			try {
+				appendTagToHtmlBody();
+				return this;
+			} catch (e) {
+				showErrMsgOnConsole(e);
+			}
 		},
 		addText: function(text) {
-			setTagText(text);
-			return this;
+			try {
+				setTagText(text);
+				return this;
+			} catch (e) {
+				showErrMsgOnConsole(e);
+			}
 		},
 		addAttributes: function(attributes) {
-			setTagAttr(attributes);
-			return this;
+			try {
+				setTagAttr(attributes);
+				return this;
+			} catch (e) {
+				showErrMsgOnConsole(e);
+			}
 		},
 		addEvents: function(events) {
-			setTagEvents(events);
-			return this;
+			try {
+				setTagEvents(events);
+				return this;
+			} catch (e) {
+				showErrMsgOnConsole(e);
+			}
+		},
+		addHref: function(url) {
+			try {
+				setHref(url);
+				return this;
+			} catch (e) {
+				showErrMsgOnConsole(e);
+			}
 		}
 	};
 
