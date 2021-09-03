@@ -58,14 +58,13 @@
 		return Object.keys(obj).length;
 	};
 	const ifZeroAttributes = (attributes) => getObjectKeysCount(attributes) === 0;
-	const addAttrToTag = (attrs) => {
+	const addAttrsToTag = (attrs) => {
 		Object.keys(attrs).forEach((attribute) => {
 			if (showWarnings && !tagsInfo[currentlyCreatedTagName]['attributes'][attribute]) {
 				// const warnMsg = '<' + currentlyCreatedTagName + "> is not a standart " + attribute + ' attribute.';
 				const warnMsg =
 					attribute + ' is not a standart attribute for ' + '<' + currentlyCreatedTagName + '> tag';
 				showWarningMsgOnConsole(warnMsg);
-				// return;
 			}
 			tag.setAttribute(attribute, attrs[attribute]);
 		});
@@ -91,6 +90,8 @@
 		tag = document.createElement(str);
 		currentlyCreatedTagName = str;
 	};
+
+	const addAttributeToTag = (attr, value) => tag.setAttribute(attr, value);
 
 	//bigger functions
 	function initializeMainSettings(config) {
@@ -137,7 +138,7 @@
 		if (!attributes) throw Error('Invalid attributes for the tag.');
 		if (!isObject(attributes)) throw Error('Attributes must be an object. Not Array, but an object.');
 		if (ifZeroAttributes(attributes)) return;
-		addAttrToTag(attributes);
+		addAttrsToTag(attributes);
 	}
 
 	function setTagEvents(events = null) {
@@ -150,11 +151,29 @@
 
 	function setHref(url = null) {
 		if (!url) throw Error('Invalid url.');
-		tag.setAttribute('href', url);
+		addAttributeToTag('href', url);
+	}
+
+	function setClassOnTag(className = null) {
+		if (!className) throw Error('Invalid class name.');
+		addAttributeToTag('class', className);
+	}
+
+	function addCssRuleToTag(cssRule) {
+		if (!cssRule) throw Error('Invalid css rule');
+		if (!isObject(cssRule)) throw Error('Invalid data type.css rule must be of type object');
+		if (getObjectKeysCount(cssRule) === 0) throw Error('Empty object is not valid css rule');
+		const ruleKey = Object.keys(cssRule)[0];
+		tag.style[ruleKey] = cssRule[ruleKey];
 	}
 
 	function addInlineStyles(inlineStyles = null) {
 		if (!isObject(inlineStyles)) throw Error('styles must be object');
+		Object.keys(inlineStyles).forEach((cssRule) => {
+			if (inlineStyles[cssRule]) {
+				tag.style[cssRule] = inlineStyles[cssRule];
+			}
+		});
 	}
 
 	function appendTagToHtmlBody() {
@@ -221,6 +240,22 @@
 		addHref: function(url) {
 			try {
 				setHref(url);
+				return this;
+			} catch (e) {
+				showErrMsgOnConsole(e);
+			}
+		},
+		addClass: function(className) {
+			try {
+				setClassOnTag(className);
+				return this;
+			} catch (e) {
+				showErrMsgOnConsole(e);
+			}
+		},
+		addStyle: function(cssRule) {
+			try {
+				addCssRuleToTag(cssRule);
 				return this;
 			} catch (e) {
 				showErrMsgOnConsole(e);
