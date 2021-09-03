@@ -1,6 +1,6 @@
-(function(global) {
+(function (global) {
 	//returning new function constructor
-	var MTag = function(config = null) {
+	var MTag = function (config = null) {
 		return new MTag.init(config);
 	};
 
@@ -43,7 +43,7 @@
 
 	//small arrow functions
 	const showErrMsgOnConsole = (e) => {
-		const [ , lineno, colno ] = e.stack.match(/(\d+):(\d+)/);
+		const [, lineno, colno] = e.stack.match(/(\d+):(\d+)/);
 		console.log('%c Line: ' + lineno, 'background: red');
 		console.log('%c Column: ' + colno, 'background: red');
 		console.log('%c ' + e.message, 'background: red');
@@ -58,10 +58,11 @@
 		return Object.keys(obj).length;
 	};
 	const ifZeroAttributes = (attributes) => getObjectKeysCount(attributes) === 0;
+	const isAttrInTagInfo = (attr) => tagsInfo[currentlyCreatedTagName]['attributes'][attr];
+	const isEventInTagInfo = (event) => tagsInfo[currentlyCreatedTagName]['events'][event];
 	const addAttrsToTag = (attrs) => {
 		Object.keys(attrs).forEach((attribute) => {
-			if (showWarnings && !tagsInfo[currentlyCreatedTagName]['attributes'][attribute]) {
-				// const warnMsg = '<' + currentlyCreatedTagName + "> is not a standart " + attribute + ' attribute.';
+			if (showWarnings && !isAttrInTagInfo(attribute)) {
 				const warnMsg =
 					attribute + ' is not a standart attribute for ' + '<' + currentlyCreatedTagName + '> tag';
 				showWarningMsgOnConsole(warnMsg);
@@ -146,6 +147,12 @@
 		if (!isObject(events)) throw Error('events must be object');
 		if (getObjectKeysCount(events) === 0) return;
 		Object.keys(events).forEach((event) => {
+			//check if event exists in tagInfo events for the current tag
+			if (showWarnings && !isEventInTagInfo(event)) {
+				const warnMsg = event + ' is not a standart event for ' + '<' + currentlyCreatedTagName + '> tag';
+				showWarningMsgOnConsole(warnMsg);
+				return;
+			}
 			tag[event] = events[event] ? events[event] : '';
 		});
 	}
@@ -161,8 +168,13 @@
 	}
 
 	function setTitle(title) {
-		if(!title) throw Error('Title attribute is invalid');
+		if (!title) throw Error('Title attribute is invalid');
 		addAttributeToTag('title', title);
+	}
+
+	function setId(id) {
+		if (!id) throw Error('Id is invalid');
+		addAttributeToTag('id', id);
 	}
 
 	function addCssRuleToTag(cssRule) {
@@ -188,7 +200,7 @@
 			if (!body) throw Error('Body tag not found.');
 			if (!tag) throw Error('You must first create a tag, then to append it to body');
 			body.appendChild(tag);
-			return this;
+			return tag;
 		} catch (e) {
 			showErrMsgOnConsole(e);
 		}
@@ -196,7 +208,7 @@
 
 	//Setting prototype(don't confuse with __proto__ - the prototype of the function. Prototype here point to the function constructor) to be empty object. It contain all custom methods of cutomst library.
 	MTag.prototype = {
-		create: function(config) {
+		create: function (config) {
 			try {
 				createNewTag(config);
 				return this;
@@ -204,7 +216,7 @@
 				showErrMsgOnConsole(e);
 			}
 		},
-		enableWarningMsg: function(turnOnOff) {
+		enableWarningMsg: function (turnOnOff) {
 			try {
 				setWarnings(turnOnOff);
 				return this;
@@ -212,7 +224,7 @@
 				showErrMsgOnConsole(e);
 			}
 		},
-		appendToBody: function() {
+		appendToBody: function () {
 			try {
 				appendTagToHtmlBody();
 				return this;
@@ -220,7 +232,7 @@
 				showErrMsgOnConsole(e);
 			}
 		},
-		addText: function(text) {
+		addText: function (text) {
 			try {
 				setTagText(text);
 				return this;
@@ -228,7 +240,7 @@
 				showErrMsgOnConsole(e);
 			}
 		},
-		addAttributes: function(attributes) {
+		addAttributes: function (attributes) {
 			try {
 				setTagAttr(attributes);
 				return this;
@@ -236,7 +248,7 @@
 				showErrMsgOnConsole(e);
 			}
 		},
-		addEvents: function(events) {
+		addEvents: function (events) {
 			try {
 				setTagEvents(events);
 				return this;
@@ -244,7 +256,7 @@
 				showErrMsgOnConsole(e);
 			}
 		},
-		addHref: function(url) {
+		addHref: function (url) {
 			try {
 				setHref(url);
 				return this;
@@ -252,7 +264,7 @@
 				showErrMsgOnConsole(e);
 			}
 		},
-		addClass: function(className) {
+		addClass: function (className) {
 			try {
 				setClassOnTag(className);
 				return this;
@@ -260,7 +272,7 @@
 				showErrMsgOnConsole(e);
 			}
 		},
-		addStyle: function(cssRule) {
+		addStyle: function (cssRule) {
 			try {
 				addCssRuleToTag(cssRule);
 				return this;
@@ -268,7 +280,7 @@
 				showErrMsgOnConsole(e);
 			}
 		},
-		addStyles: function(rules) {
+		addStyles: function (rules) {
 			try {
 				addInlineStyles(rules);
 				return this;
@@ -276,18 +288,33 @@
 				showErrMsgOnConsole(e);
 			}
 		},
-		addTitle: function(title) {
+		addTitle: function (title) {
 			try {
 				setTitle(title);
 				return this;
 			} catch (e) {
 				showWarningMsgOnConsole(e);
 			}
+		},
+		addId: function (id) {
+			try {
+				setId(id);
+				return this;
+			} catch (e) {
+				showErrMsgOnConsole(e);
+			}
+		},
+		getTag: function () {
+			try {
+				return tag;
+			} catch (e) {
+				showErrMsgOnConsole(e);
+			}
 		}
 	};
 
 	//In function constructor we initialize here all needed variables if there are any.
-	MTag.init = function(config = null) {
+	MTag.init = function (config = null) {
 		initializeMainSettings(config);
 	};
 

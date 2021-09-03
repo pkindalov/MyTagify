@@ -26,11 +26,26 @@
         .addClass('btn btn-primary')
         .addStyle({ 'text-decoration': 'none' })
         .addStyles({ 'color': 'green', 'font-size': '30px', 'background': 'gray' })
-
-        .addAttributes({ href: 'http://graphicsandphotos.com/', class: 'btn btn-primary', target: '_blank' })
-        .addEvents({ 'onclick': smallTestFunc, 'onfocus': focusTestFunct })
-        .addTitle('Якооо')
+        .addAttributes({ href: 'http://graphicsandphotos.com/', class: 'btn btn-primary', target: '_blank'})
+        .addEvents({ 'onclick': smallTestFunc, 'onfocus': focusTestFunct, 'notExistsEvent': 'sdfsdf' })
+        .addTitle('My photos and graphics')
+        .addId('graphicsandphotos')
         .appendToBody();
+    // const link = mtag
+    //             .enableWarningMsg(true)
+    //             .create('a')
+    //             .addText('rrrr')
+    //             .addHref('http://graphicsandphotos.com/')
+    //             .addClass('btn btn-primary')
+    //             .addStyle({ 'text-decoration': 'none' })
+    //             .addStyles({ 'color': 'green', 'font-size': '30px', 'background': 'gray' })
+    //             .addAttributes({ href: 'http://graphicsandphotos.com/', class: 'btn btn-primary', target: '_blank' })
+    //             .addEvents({ 'onclick': smallTestFunc, 'onfocus': focusTestFunct, 'notExistsEvent': 'sdfsdf' })
+    //              .addTitle('My photos and graphics')
+                    // .addId('graphicsandphotos')
+    //             .getTag();
+    // console.log(link);        
+    // document.getElementsByTagName('body')[0].appendChild(link);
 
     //creating a tag with config
     // mtag
