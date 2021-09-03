@@ -14,7 +14,12 @@
 	const errThrower = (msg) => {
 		throw Error(msg);
 	};
-	const showErrMsgOnConsole = (msg) => console.log(msg);
+	const showErrMsgOnConsole = (e) => {
+		const [ , lineno, colno ] = e.stack.match(/(\d+):(\d+)/);
+		console.log('Line:', lineno);
+		console.log('Column:', colno);
+		console.log(e.message);
+	};
 	const setTagText = (text) => {
 		if (!text) errThrower('Text cannot be invalid value. Error on line 19');
 		tag.innerText = text;
@@ -36,30 +41,45 @@
 		addAttrToTag(attributes);
 	}
 
+	function setTagEvents(events) {
+		if(!isObject(events)) errThrower('events must be object');
+		if(Object.keys(events).length === 0) return;
+		if(!events['eventName']) errThrower('missing eventName property in events object');
+		if(events['eventName'].length === 0) return;
+		for (let i = 0; i < events['eventName'].length; i++) {
+			const eventName = events['eventName'][i];
+			if(events['eventFunct'][i]){
+				console.log(1);
+				const eventFunc = events['eventFunct'][i];
+				tag[eventName] = eventFunc;
+			}
+		}
+	}
+
 	//Setting prototype(don't confuse with __proto__ - the prototype of the function. Prototype here point to the function constructor) to be empty object. It contain all custom methods of cutomst library.
 	MTag.prototype = {
 		create: function(config) {
 			try {
-				if (!config) errThrower('Invalid config on line 18');
-				const { tagName, tagAttr, text } = config;
-				if (!tagName) errThrower('Invalid name of tag. Error on line 31');
+				if (!config) errThrower('Invalid config');
+				const { tagName, tagAttr, text, events } = config;
+				if (!tagName) errThrower('Invalid name of tag.');
 				tag = document.createElement(tagName);
 				setTagText(text);
 				setTagAttr(tagAttr);
-
+				setTagEvents(events);
 				return this;
-			} catch (ex) {
-				showErrMsgOnConsole(ex.message);
+			} catch (e) {
+				showErrMsgOnConsole(e);
 			}
 		},
 		appendToBody: function() {
 			try {
 				const body = document.getElementsByTagName('body')[0];
-				if (!body) errThrower('Body tag not found. Error on line 39');
+				if (!body) errThrower('Body tag not found.');
 				body.appendChild(tag);
 				return this;
-			} catch (ex) {
-				showErrMsgOnConsole(ex.message);
+			} catch (e) {
+				showErrMsgOnConsole(e);
 			}
 		}
 	};
