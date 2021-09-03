@@ -33,7 +33,7 @@
 				onmouseover: true,
 				onmouseup: true
 			},
-			compatibility: { allBrowsers: true, msg: '' }
+			compatibility: { allBrowsers: true, msg: 'Compatible on all browsers' }
 		}
 	};
 
@@ -72,9 +72,18 @@
 	const showWarningMsgOnConsole = (msg) => console.log('%c ' + msg, 'background: yellow;');
 	const isVariableExists = (variable) => typeof variable !== undefined || variable === null;
 	const setWarnings = (turnOnOff) => {
-	 	if(isVariableExists(turnOnOff)) {
-			 showWarnings = turnOnOff;
-		 }
+		if (isVariableExists(turnOnOff)) {
+			showWarnings = turnOnOff;
+		}
+	};
+	const checkBrowserCompatibility = (tag) => {
+		const isCompatible = tagsInfo[tag]['compatibility']['allBrowsers'];
+		if (!isCompatible) {
+			const msg = !tagsInfo[tag]['compatibility']['msg'];
+			showWarningMsgOnConsole(msg);
+			return false;
+		}
+		return true;
 	};
 
 	//bigger functions
@@ -88,6 +97,22 @@
 		const { isWarningsOn } = config;
 		//check if the variable exists and if its value is true
 		showWarnings = isVariableExists(isWarningsOn) && isWarningsOn ? true : isWarningsOn;
+	}
+
+	function createNewTag(config) {
+		try {
+			if (!config) errThrower('Invalid config');
+			const { tagName, tagAttr, text, events } = config;
+			if (!tagName) errThrower('Invalid name of tag.');
+			tag = document.createElement(tagName);
+			currentlyCreatedTagName = tagName;
+			setTagText(text);
+			setTagAttr(tagAttr);
+			setTagEvents(events);
+			checkBrowserCompatibility(tagName);
+		} catch (e) {
+			showErrMsgOnConsole(e);
+		}
 	}
 
 	function setTagAttr(attributes) {
@@ -111,37 +136,30 @@
 		}
 	}
 
+	function appendTagToHtmlBody() {
+		try {
+			const body = document.getElementsByTagName('body')[0];
+			if (!body) errThrower('Body tag not found.');
+			body.appendChild(tag);
+			return this;
+		} catch (e) {
+			showErrMsgOnConsole(e);
+		}
+	}
+
 	//Setting prototype(don't confuse with __proto__ - the prototype of the function. Prototype here point to the function constructor) to be empty object. It contain all custom methods of cutomst library.
 	MTag.prototype = {
 		create: function(config) {
-			try {
-				if (!config) errThrower('Invalid config');
-				const { tagName, tagAttr, text, events } = config;
-				if (!tagName) errThrower('Invalid name of tag.');
-				tag = document.createElement(tagName);
-				currentlyCreatedTagName = tagName;
-				setTagText(text);
-				setTagAttr(tagAttr);
-				setTagEvents(events);
-				// checkBrowserCompatibility(tagName);
-				return this;
-			} catch (e) {
-				showErrMsgOnConsole(e);
-			}
+			createNewTag(config);
+			return this;
 		},
 		enableWarningMsg: function(turnOnOff) {
 			setWarnings(turnOnOff);
 			return this;
 		},
 		appendToBody: function() {
-			try {
-				const body = document.getElementsByTagName('body')[0];
-				if (!body) errThrower('Body tag not found.');
-				body.appendChild(tag);
-				return this;
-			} catch (e) {
-				showErrMsgOnConsole(e);
-			}
+			appendTagToHtmlBody();
+			return this;
 		}
 	};
 
