@@ -107,7 +107,7 @@
 	}
 
 	function createTagByConfig(config) {
-		const { tagName, tagAttr, text, events, inlineCSSstyles } = config;
+		const { tagName, tagAttr, text, events, inlineCSSstyles, title } = config;
 		if (!tagName) throw Error('Invalid name of tag.');
 		tag = document.createElement(tagName);
 		currentlyCreatedTagName = tagName;
@@ -116,6 +116,7 @@
 		if (tagAttr) setTagAttr(tagAttr);
 		if (events) setTagEvents(events);
 		if (inlineCSSstyles) addInlineStyles(inlineCSSstyles);
+		if (title) setTitle(title);
 	}
 
 	function createNewTag(element) {
@@ -145,7 +146,7 @@
 		if (!isObject(events)) throw Error('events must be object');
 		if (getObjectKeysCount(events) === 0) return;
 		Object.keys(events).forEach((event) => {
-			tag[event] = events[event];
+			tag[event] = events[event] ? events[event] : '';
 		});
 	}
 
@@ -159,12 +160,17 @@
 		addAttributeToTag('class', className);
 	}
 
+	function setTitle(title) {
+		if(!title) throw Error('Title attribute is invalid');
+		addAttributeToTag('title', title);
+	}
+
 	function addCssRuleToTag(cssRule) {
 		if (!cssRule) throw Error('Invalid css rule');
 		if (!isObject(cssRule)) throw Error('Invalid data type.css rule must be of type object');
 		if (getObjectKeysCount(cssRule) === 0) throw Error('Empty object is not valid css rule');
 		const ruleKey = Object.keys(cssRule)[0];
-		tag.style[ruleKey] = cssRule[ruleKey];
+		tag.style[ruleKey] = cssRule[ruleKey] ? cssRule[ruleKey] : '';
 	}
 
 	function addInlineStyles(inlineStyles = null) {
@@ -180,6 +186,7 @@
 		try {
 			const body = document.getElementsByTagName('body')[0];
 			if (!body) throw Error('Body tag not found.');
+			if (!tag) throw Error('You must first create a tag, then to append it to body');
 			body.appendChild(tag);
 			return this;
 		} catch (e) {
@@ -259,6 +266,22 @@
 				return this;
 			} catch (e) {
 				showErrMsgOnConsole(e);
+			}
+		},
+		addStyles: function(rules) {
+			try {
+				addInlineStyles(rules);
+				return this;
+			} catch (e) {
+				showErrMsgOnConsole(e);
+			}
+		},
+		addTitle: function(title) {
+			try {
+				setTitle(title);
+				return this;
+			} catch (e) {
+				showWarningMsgOnConsole(e);
 			}
 		}
 	};
