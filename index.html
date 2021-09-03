@@ -26,10 +26,21 @@
         .addClass('btn btn-primary')
         .addStyle({ 'text-decoration': 'none' })
         .addStyles({ 'color': 'green', 'font-size': '30px', 'background': 'gray' })
-        .addAttributes({ href: 'http://graphicsandphotos.com/', class: 'btn btn-primary', target: '_blank'})
-        .addEvents({ 'onclick': smallTestFunc, 'onfocus': focusTestFunct, 'notExistsEvent': 'sdfsdf' })
+        .addAttributes({ href: 'http://graphicsandphotos.com/', class: 'btn btn-primary', target: '_blank' })
+        .addEvents({ 'onclick': smallTestFunc, 'onfocus': focusTestFunct })
         .addTitle('My photos and graphics')
         .addId('graphicsandphotos')
+        .appendToBody();
+
+    mtag
+        .create('abbr')
+        .addText('Abbr test')
+        .appendToBody();
+
+    mtag
+        .create('acronym')
+        .addText('Acronym test')
+        .addTitle('acronym')
         .appendToBody();
     // const link = mtag
     //             .enableWarningMsg(true)

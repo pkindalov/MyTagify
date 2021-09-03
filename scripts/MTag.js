@@ -1,40 +1,48 @@
 (function (global) {
 	//returning new function constructor
-	var MTag = function (config = null) {
+	const MTag = function (config = null) {
 		return new MTag.init(config);
 	};
+
+	const removedTagsHTML5 = { acronym: true }
 
 	//here you can declare data not visible for the outer world because of the closure which hide it.
 	//different information about tags.
 	const tagsInfo = {
 		a: {
 			attributes: {
-				href: true,
-				name: true,
-				rel: true,
-				rev: true,
-				target: true,
-				id: true,
-				class: true,
-				style: true,
-				title: true
+				href: true, name: true, rel: true, rev: true, target: true, id: true, class: true,
+				style: true, title: true
 			},
 			events: {
-				onfocus: true,
-				onblur: true,
-				onclick: true,
-				ondblclick: true,
-				onkeydown: true,
-				onkeypress: true,
-				onkeyup: true,
-				onmousedown: true,
-				onmouseout: true,
-				onmousemove: true,
-				onmouseover: true,
-				onmouseup: true
+				onfocus: true, onblur: true, onclick: true, ondblclick: true, onkeydown: true,
+				onkeypress: true, onkeyup: true, onmousedown: true, onmouseout: true, onmousemove: true,
+				onmouseover: true, onmouseup: true
 			},
 			compatibility: { allBrowsers: true, msg: 'Compatible on all browsers' }
-		}
+		},
+		abbr: {
+			attributes: {
+				id: true, class: true, style: true, title: true
+			},
+			events: {
+				onfocus: true, onblur: true, onclick: true, ondblclick: true, onkeydown: true,
+				onkeypress: true, onkeyup: true, onmousedown: true, onmouseout: true, onmousemove: true,
+				onmouseover: true, onmouseup: true
+			},
+			compatibility: { allBrowsers: true, msg: 'Compatible on all browsers' }
+		},
+		acronym: {
+			attributes: {
+				id: true, class: true, style: true, title: true
+			},
+			events: {
+				onfocus: true, onblur: true, onclick: true, ondblclick: true, onkeydown: true,
+				onkeypress: true, onkeyup: true, onmousedown: true, onmouseout: true, onmousemove: true,
+				onmouseover: true, onmouseup: true
+			},
+			compatibility: { allBrowsers: true, msg: 'Compatible on all browsers' }
+		},
 	};
 
 	let tag = null;
@@ -113,6 +121,7 @@
 		tag = document.createElement(tagName);
 		currentlyCreatedTagName = tagName;
 		checkBrowserCompatibility(currentlyCreatedTagName);
+		//TODO1 to check if the creating tag is removed from html 5
 		if (text) setTagText(text);
 		if (tagAttr) setTagAttr(tagAttr);
 		if (events) setTagEvents(events);
@@ -131,6 +140,7 @@
 			if (!element) throw Error('Invalid name of tag.');
 			createTagFromString(element);
 			checkBrowserCompatibility(currentlyCreatedTagName);
+			//TODO2 to check if the creating tag is removed from html 5
 		} catch (e) {
 			showErrMsgOnConsole(e);
 		}
