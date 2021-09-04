@@ -85,19 +85,30 @@
 			showWarnings = turnOnOff;
 		}
 	};
-	const checkBrowserCompatibility = (tag) => {
-		const isCompatible = tagsInfo[tag]['compatibility']['allBrowsers'];
-		if (!isCompatible) {
-			const msg = !tagsInfo[tag]['compatibility']['msg'];
+	const checkBrowserCompatibility = () => {
+		const isCompatible = tagsInfo[currentlyCreatedTagName]['compatibility']['allBrowsers'];
+		if (showWarnings && currentlyCreatedTagName && !isCompatible) {
+			const msg = !tagsInfo[currentlyCreatedTagName]['compatibility']['msg'];
 			showWarningMsgOnConsole(msg);
 			return false;
 		}
 		return true;
 	};
 
+	const checkIfRemovedInHTML5 = () => {
+		if (showWarnings && currentlyCreatedTagName && removedTagsHTML5[currentlyCreatedTagName]) {
+			const msg = 'Not recommend. The ' + currentlyCreatedTagName + ' tag is removed from HTML 5';
+			showWarningMsgOnConsole(msg);
+			return true;
+		}
+		return false;
+	}
+
 	const createTagFromString = (str) => {
 		tag = document.createElement(str);
 		currentlyCreatedTagName = str;
+		checkIfRemovedInHTML5();
+		checkBrowserCompatibility();
 	};
 
 	const addAttributeToTag = (attr, value) => tag.setAttribute(attr, value);
@@ -120,7 +131,8 @@
 		if (!tagName) throw Error('Invalid name of tag.');
 		tag = document.createElement(tagName);
 		currentlyCreatedTagName = tagName;
-		checkBrowserCompatibility(currentlyCreatedTagName);
+		checkBrowserCompatibility();
+		checkIfRemovedInHTML5();
 		//TODO1 to check if the creating tag is removed from html 5
 		if (text) setTagText(text);
 		if (tagAttr) setTagAttr(tagAttr);
@@ -139,7 +151,6 @@
 			}
 			if (!element) throw Error('Invalid name of tag.');
 			createTagFromString(element);
-			checkBrowserCompatibility(currentlyCreatedTagName);
 			//TODO2 to check if the creating tag is removed from html 5
 		} catch (e) {
 			showErrMsgOnConsole(e);
@@ -321,6 +332,8 @@
 				showErrMsgOnConsole(e);
 			}
 		}
+		//TODO 3 to add function to return tag as json
+		//TODO 4 to return tag from a json
 	};
 
 	//In function constructor we initialize here all needed variables if there are any.
