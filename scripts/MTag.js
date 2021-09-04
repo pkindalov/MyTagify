@@ -245,6 +245,22 @@
 		}
 	}
 
+	function appendMtagToElById(elementId) {
+		if (!elementId) throw Error('elementId is not valid.Cannot be empty, undefined or null');
+		const parentEl = document.getElementById(elementId);
+		if (!parentEl) throw Error('Element with id ' + elementId + ' not found');
+		if (!tag) throw Error('You must first create a tag with create command');
+		parentEl.appendChild(tag);
+	}
+
+	function appendElToContById(element, containerId) {
+		if (!element) throw Error('Element is not valid');
+		if (!containerId) throw Error('id of container is not valid');
+		const parentEl = document.getElementById(containerId);
+		if (!parentEl) throw Error('Element with id ' + containerId + ' not found');
+		parentEl.appendChild(element);
+	}
+
 	//Setting prototype(don't confuse with __proto__ - the prototype of the function. Prototype here point to the function constructor) to be empty object. It contain all custom methods of cutomst library.
 	MTag.prototype = {
 		create: function (config) {
@@ -267,6 +283,20 @@
 			try {
 				appendTagToHtmlBody();
 				return this;
+			} catch (e) {
+				showErrMsgOnConsole(e);
+			}
+		},
+		appendMtagToElById: function (element) {
+			try {
+				appendMtagToElById(element);
+			} catch (e) {
+				showErrMsgOnConsole(e);
+			}
+		},
+		appendElToContById: function (element, container) {
+			try {
+				appendElToContById(element, container);
 			} catch (e) {
 				showErrMsgOnConsole(e);
 			}

@@ -9,6 +9,7 @@
 </head>
 
 <body>
+    <div id="container"></div>
 
 </body>
 <script src="./scripts/MTag.js"></script>
@@ -41,12 +42,15 @@
         .create('acronym')
         .addText('Acronym test')
         .addTitle('acronym')
-        .appendToBody();
+        .appendMtagToElById('container');
 
     const jsonTagExample = mtag.create('acronym').addText('json tag test').addTitle('json tag').getTagJSON();
     const parsedTagFromJSON = mtag.parseTagFromJSON(jsonTagExample);
     // console.log(typeof parsedTagFromJSON);
     mtag.setTagObj(parsedTagFromJSON).appendToBody();
+    const paragraph = document.createElement('p');
+    paragraph.innerText = 'I am a paragrpah';
+    mtag.appendElToContById(paragraph, 'container');
     // console.log(jsonTagExample);
     // console.log(mtag.parseTagFromJSON(jsonTagExample));
     // const link = mtag
