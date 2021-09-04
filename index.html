@@ -43,8 +43,11 @@
         .addTitle('acronym')
         .appendToBody();
 
-    const jsonTagExample = mtag.create('acronym').addText('json tag').addTitle('json tag').getTagJSON();
-    console.log(jsonTagExample);
+    const jsonTagExample = mtag.create('acronym').addText('json tag test').addTitle('json tag').getTagJSON();
+    const parsedTagFromJSON = mtag.parseTagFromJSON(jsonTagExample);
+    // console.log(typeof parsedTagFromJSON);
+    mtag.setTagObj(parsedTagFromJSON).appendToBody();
+    // console.log(jsonTagExample);
     // console.log(mtag.parseTagFromJSON(jsonTagExample));
     // const link = mtag
     //             .enableWarningMsg(true)

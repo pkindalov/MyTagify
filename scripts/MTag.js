@@ -60,7 +60,8 @@
 		if (!text) throw Error('Text cannot be invalid value.');
 		tag.innerText = text;
 	};
-	const isObject = (data) => data && typeof data === 'object' && data.constructor === Object;
+	const isObject = (variable) => variable && typeof variable === 'object' && variable.constructor === Object;
+	const isDOMElement = (variable) => variable && typeof variable === 'object' && variable.constructor === Element;
 	const getObjectKeysCount = (obj) => {
 		if (!isObject(obj)) throw Error('Wrong type. Expect an object, not an array or something else.');
 		return Object.keys(obj).length;
@@ -112,12 +113,24 @@
 	};
 
 	const addAttributeToTag = (attr, value) => tag.setAttribute(attr, value);
-	const stringifiedTag = () => JSON.stringify(tag, Object.getOwnPropertyNames(tag["__proto__"]), 2);
+	const stringifiedTag = () => {
+		const html = tag.outerHTML;
+		const data = { tag: html };
+		const json = JSON.stringify(data)
+		return json;
+	}
 	const isString = (variable) => typeof variable === 'string';
-	const parseTagFromJSON = (tagStr) => {
-		if(!tagStr) throw Error('Invalid value passed on parseTagFromJSON. Check the passed value again. Cannot be empty, null or undefined');
-		if(!isString(tagStr)) throw Error('Value must be of a type string.');
-		return JSON.parse(tagStr); 
+	const parseTagFromJSON = (tagJSONStr) => {
+		if (!tagJSONStr) throw Error('Invalid value passed on parseTagFromJSON. Check the passed value again. Cannot be empty, null or undefined');
+		if (!isString(tagJSONStr)) throw Error('Value must be of a type string.');
+		const obj = JSON.parse(tagJSONStr);
+		tag = new DOMParser().parseFromString(obj.tag, "text/xml").firstElementChild;
+		return tag;
+	}
+	const setTagObj = (outerTag) => {
+		console.log(outerTag.constructor);
+		if (!outerTag || !isDOMElement(outerTag)) throw Error('Inavlid data type.Tag must be ot type object');
+		tag = outerTag;
 	}
 
 	//bigger functions
@@ -337,21 +350,24 @@
 				showErrMsgOnConsole(e);
 			}
 		},
-		//TODO 3 to add function to return tag as json
 		getTagJSON: function () {
 			try {
-				// console.log(Object.getOwnPropertyNames(tag["__proto__"]));
-				// console.log(JSON.stringify(tag, Object.getOwnPropertyNames(tag["__proto__"]), 2));
-				//JSON.stringify(tag, Object.getOwnPropertyNames(tag["__proto__"]), 2)
 				return stringifiedTag();
 			} catch (e) {
 				showErrMsgOnConsole(e);
 			}
 		},
-		//TODO 4 to return tag from a json
-		parseTagFromJSON: function (tagStr) {
+		parseTagFromJSON: function (tagJSONStr) {
 			try {
-				return parseTagFromJSON(tagStr);
+				return parseTagFromJSON(tagJSONStr);
+			} catch (e) {
+				showErrMsgOnConsole(e);
+			}
+		},
+		setTagObj: function (tag) {
+			try {
+				setTagObj(tag);
+				return this;
 			} catch (e) {
 				showErrMsgOnConsole(e);
 			}
