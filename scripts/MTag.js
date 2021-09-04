@@ -107,11 +107,18 @@
 	const createTagFromString = (str) => {
 		tag = document.createElement(str);
 		currentlyCreatedTagName = str;
-		checkIfRemovedInHTML5();
 		checkBrowserCompatibility();
+		checkIfRemovedInHTML5();
 	};
 
 	const addAttributeToTag = (attr, value) => tag.setAttribute(attr, value);
+	const stringifiedTag = () => JSON.stringify(tag, Object.getOwnPropertyNames(tag["__proto__"]), 2);
+	const isString = (variable) => typeof variable === 'string';
+	const parseTagFromJSON = (tagStr) => {
+		if(!tagStr) throw Error('Invalid value passed on parseTagFromJSON. Check the passed value again. Cannot be empty, null or undefined');
+		if(!isString(tagStr)) throw Error('Value must be of a type string.');
+		return JSON.parse(tagStr); 
+	}
 
 	//bigger functions
 	function initializeMainSettings(config) {
@@ -133,7 +140,6 @@
 		currentlyCreatedTagName = tagName;
 		checkBrowserCompatibility();
 		checkIfRemovedInHTML5();
-		//TODO1 to check if the creating tag is removed from html 5
 		if (text) setTagText(text);
 		if (tagAttr) setTagAttr(tagAttr);
 		if (events) setTagEvents(events);
@@ -151,7 +157,6 @@
 			}
 			if (!element) throw Error('Invalid name of tag.');
 			createTagFromString(element);
-			//TODO2 to check if the creating tag is removed from html 5
 		} catch (e) {
 			showErrMsgOnConsole(e);
 		}
@@ -331,9 +336,26 @@
 			} catch (e) {
 				showErrMsgOnConsole(e);
 			}
-		}
+		},
 		//TODO 3 to add function to return tag as json
+		getTagJSON: function () {
+			try {
+				// console.log(Object.getOwnPropertyNames(tag["__proto__"]));
+				// console.log(JSON.stringify(tag, Object.getOwnPropertyNames(tag["__proto__"]), 2));
+				//JSON.stringify(tag, Object.getOwnPropertyNames(tag["__proto__"]), 2)
+				return stringifiedTag();
+			} catch (e) {
+				showErrMsgOnConsole(e);
+			}
+		},
 		//TODO 4 to return tag from a json
+		parseTagFromJSON: function (tagStr) {
+			try {
+				return parseTagFromJSON(tagStr);
+			} catch (e) {
+				showErrMsgOnConsole(e);
+			}
+		}
 	};
 
 	//In function constructor we initialize here all needed variables if there are any.
