@@ -42,6 +42,7 @@
         .create('acronym')
         .addText('Acronym test')
         .addTitle('acronym')
+        .changeInnerHTML('<acronym title="Text changed">Changed acronym text for the test</acronym>')
         .appendMtagToElById('container');
 
     const jsonTagExample = mtag.create('acronym').addText('json tag test').addTitle('json tag').getTagJSON();

@@ -70,6 +70,70 @@
 			},
 			compatibility: { allBrowsers: false, msg: genCompatibleMsg('applet') }
 		},
+		area: {
+			attributes: {
+				id: true, class: true, style: true, title: true, alt: true, href: true, target: true, shape: true, coords: true
+			},
+			events: {
+				onfocus: true, onblur: true, onclick: true, ondblclick: true, onkeydown: true,
+				onkeypress: true, onkeyup: true, onmousedown: true, onmouseout: true, onmousemove: true,
+				onmouseover: true, onmouseup: true
+			},
+			compatibility: { allBrowsers: false, msg: genCompatibleMsg('area') }
+		},
+		article: {
+			attributes: {
+				id: true, class: true, style: true, title: true,
+			},
+			events: {
+				onfocus: true, onblur: true, onabort: true, onchange: true, onbeforeunload: true, onclick: true, ondblclick: true,
+				onkeydown: true, onkeypress: true, onkeyup: true, onmousedown: true, onmouseout: true, onmousemove: true,
+				onmouseover: true, onmouseup: true, onreset: true, onselect: true, onsubmit: true, onload: true, onunload: true,
+				ondrag: true, ondragend: true, ondragenter: true, ondragleave: true, ondragover: true, ondragstart: true, ondrop: true,
+				onerror: true, onmessage: true, onmousewheel: true, onscroll: true, onresize: true, onstorage: true
+			},
+			compatibility: { allBrowsers: false, msg: genCompatibleMsg('article') }
+		},
+		aside: {
+			attributes: {
+				id: true, class: true, style: true, title: true,
+			},
+			events: {
+				onfocus: true, onblur: true, onabort: true, onchange: true, onbeforeunload: true, onclick: true, ondblclick: true,
+				onkeydown: true, onkeypress: true, onkeyup: true, onmousedown: true, onmouseout: true, onmousemove: true,
+				onmouseover: true, onmouseup: true, onreset: true, onselect: true, onsubmit: true, onload: true, onunload: true,
+				ondrag: true, ondragend: true, ondragenter: true, ondragleave: true, ondragover: true, ondragstart: true, ondrop: true,
+				onerror: true, onmessage: true, onmousewheel: true, onscroll: true, onresize: true, onstorage: true
+			},
+			compatibility: { allBrowsers: false, msg: genCompatibleMsg('aside') }
+		},
+		audio: {
+			attributes: {
+				id: true, class: true, style: true, title: true, src: true, autoplay: true, control: true, loop: true, muted: true, preload: true
+			},
+			events: {
+				onfocus: true, onblur: true, onabort: true, onchange: true, onbeforeunload: true, onclick: true, ondblclick: true,
+				onkeydown: true, onkeypress: true, onkeyup: true, onmousedown: true, onmouseout: true, onmousemove: true,
+				onmouseover: true, onmouseup: true, onreset: true, onselect: true, onsubmit: true, onload: true, onunload: true,
+				ondrag: true, ondragend: true, ondragenter: true, ondragleave: true, ondragover: true, ondragstart: true, ondrop: true,
+				onerror: true, onmessage: true, onmousewheel: true, onscroll: true, onresize: true, onstorage: true
+			},
+			compatibility: { allBrowsers: false, msg: genCompatibleMsg('audio') }
+		},
+		b: {
+			attributes: {
+				id: true, class: true, style: true, title: true,
+			},
+			events: {
+				onfocus: true, onblur: true, onabort: true, onchange: true, onbeforeunload: true, onclick: true, ondblclick: true,
+				onkeydown: true, onkeypress: true, onkeyup: true, onmousedown: true, onmouseout: true, onmousemove: true,
+				onmouseover: true, onmouseup: true, onreset: true, onselect: true, onsubmit: true, onload: true, onunload: true,
+				ondrag: true, ondragend: true, ondragenter: true, ondragleave: true, ondragover: true, ondragstart: true, ondrop: true,
+				onerror: true, onmessage: true, onmousewheel: true, onscroll: true, onresize: true, onstorage: true
+			},
+			compatibility: { allBrowsers: false, msg: genCompatibleMsg('b') }
+		},
+		//TODO to finish this for all tags
 	};
 
 	let tag = null;
@@ -85,6 +149,7 @@
 	};
 	const setTagText = (text = null) => {
 		if (!text) throw Error('Text cannot be invalid value.');
+		tagValidator();
 		tag.innerText = text;
 	};
 	const isObject = (variable) => variable && typeof variable === 'object' && variable.constructor === Object;
@@ -154,10 +219,20 @@
 		tag = new DOMParser().parseFromString(obj.tag, "text/xml").firstElementChild;
 		return tag;
 	}
-	const setTagObj = (outerTag) => {
-		console.log(outerTag.constructor);
+	const setTagObj = (outerTag = null) => {
+		// console.log(outerTag.constructor);
 		if (!outerTag || !isDOMElement(outerTag)) throw Error('Inavlid data type.Tag must be ot type object');
 		tag = outerTag;
+	}
+
+	const changeInnerHTML = (htmlStr = null) => {
+		if (!htmlStr) throw Error('Invalid html string.');
+		tagValidator();
+		tag.innerHTML = htmlStr;
+	}
+
+	const tagValidator = () => {
+		if (!tag) throw Error('Tag is invalid. You must first create a tag before doing the current operation.');
 	}
 
 	//bigger functions
@@ -315,6 +390,7 @@
 				msg = 'Supported only on Mozilla Firefox';
 				return msg;
 			default:
+				msg = 'No information about this element';
 				return msg;
 		}
 	}
@@ -393,12 +469,14 @@
 		if (!cssRule) throw Error('Invalid css rule');
 		if (!isObject(cssRule)) throw Error('Invalid data type.css rule must be of type object');
 		if (getObjectKeysCount(cssRule) === 0) throw Error('Empty object is not valid css rule');
+		tagValidator();
 		const ruleKey = Object.keys(cssRule)[0];
 		tag.style[ruleKey] = cssRule[ruleKey] ? cssRule[ruleKey] : '';
 	}
 
 	function addInlineStyles(inlineStyles = null) {
 		if (!isObject(inlineStyles)) throw Error('styles must be object');
+		tagValidator();
 		Object.keys(inlineStyles).forEach((cssRule) => {
 			if (inlineStyles[cssRule]) {
 				tag.style[cssRule] = inlineStyles[cssRule];
@@ -570,6 +648,14 @@
 		setTagObj: function (tag) {
 			try {
 				setTagObj(tag);
+				return this;
+			} catch (e) {
+				showErrMsgOnConsole(e);
+			}
+		},
+		changeInnerHTML: function (tagHtmlStr) {
+			try {
+				changeInnerHTML(tagHtmlStr);
 				return this;
 			} catch (e) {
 				showErrMsgOnConsole(e);
