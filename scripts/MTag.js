@@ -587,6 +587,174 @@
 			},
 			compatibility: { allBrowsers: true, msg: genCompatibleMsg('h6') }
 		},
+		head: {
+			attributes: { profile: true },
+			events: {},
+			compatibility: { allBrowsers: true, msg: genCompatibleMsg('head') }
+		},
+		header: {
+			attributes: { id: true, class: true, style: true, title: true },
+			events: {
+				onfocus: true, onblur: true, onabort: true, onchange: true, onbeforeunload: true, onclick: true, ondblclick: true,
+				onkeydown: true, onkeypress: true, onkeyup: true, onmousedown: true, onmouseout: true, onmousemove: true,
+				onmouseover: true, onmouseup: true, onreset: true, onselect: true, onsubmit: true, onload: true, onunload: true,
+				ondrag: true, ondragend: true, ondragenter: true, ondragleave: true, ondragover: true, ondragstart: true, ondrop: true,
+				onerror: true, onmessage: true, onmousewheel: true, onscroll: true, onresize: true, onstorage: true
+			},
+			compatibility: { allBrowsers: true, msg: genCompatibleMsg('header') }
+		},
+		hgroup: {
+			attributes: { id: true, class: true, style: true, title: true },
+			events: {
+				onfocus: true, onblur: true, onabort: true, onchange: true, onbeforeunload: true, onclick: true, ondblclick: true,
+				onkeydown: true, onkeypress: true, onkeyup: true, onmousedown: true, onmouseout: true, onmousemove: true,
+				onmouseover: true, onmouseup: true, onreset: true, onselect: true, onsubmit: true, onload: true, onunload: true,
+				ondrag: true, ondragend: true, ondragenter: true, ondragleave: true, ondragover: true, ondragstart: true, ondrop: true,
+				onerror: true, onmessage: true, onmousewheel: true, onscroll: true, onresize: true, onstorage: true
+			},
+			compatibility: { allBrowsers: true, msg: genCompatibleMsg('hgroup') }
+		},
+		hr: {
+			attributes: {
+				id: true, class: true, style: true, title: true, align: true, color: true,
+				noshade: true, size: true, width: true
+			},
+			events: {
+				onfocus: true, onblur: true, onabort: true, onchange: true, onbeforeunload: true, onclick: true, ondblclick: true,
+				onkeydown: true, onkeypress: true, onkeyup: true, onmousedown: true, onmouseout: true, onmousemove: true,
+				onmouseover: true, onmouseup: true, onreset: true, onselect: true, onsubmit: true, onload: true, onunload: true,
+				ondrag: true, ondragend: true, ondragenter: true, ondragleave: true, ondragover: true, ondragstart: true, ondrop: true,
+				onerror: true, onmessage: true, onmousewheel: true, onscroll: true, onresize: true, onstorage: true
+			},
+			compatibility: { allBrowsers: true, msg: genCompatibleMsg('hr') }
+		},
+		html: {
+			attributes: { id: true, class: true, style: true, title: true, xmlns: true },
+			events: {},
+			compatibility: { allBrowsers: true, msg: genCompatibleMsg('html') }
+		},
+		i: {
+			attributes: { id: true, class: true, style: true, title: true },
+			events: {
+				onfocus: true, onblur: true, onabort: true, onchange: true, onbeforeunload: true, onclick: true, ondblclick: true,
+				onkeydown: true, onkeypress: true, onkeyup: true, onmousedown: true, onmouseout: true, onmousemove: true,
+				onmouseover: true, onmouseup: true, onreset: true, onselect: true, onsubmit: true, onload: true, onunload: true,
+				ondrag: true, ondragend: true, ondragenter: true, ondragleave: true, ondragover: true, ondragstart: true, ondrop: true,
+				onerror: true, onmessage: true, onmousewheel: true, onscroll: true, onresize: true, onstorage: true
+			},
+			compatibility: { allBrowsers: true, msg: genCompatibleMsg('i') }
+		},
+		iframe: {
+			attributes: {
+				id: true, class: true, style: true, title: true, height: true, name: true, sandbox: true,
+				src: true, width: true, align: true, frameborder: true, longdesc: true, marginheight: true,
+				marginwidth: true, scrolling: true, allowfullscreen: true
+			},
+			events: {
+				onfocus: true, onblur: true, onabort: true, onchange: true, onbeforeunload: true, onclick: true, ondblclick: true,
+				onkeydown: true, onkeypress: true, onkeyup: true, onmousedown: true, onmouseout: true, onmousemove: true,
+				onmouseover: true, onmouseup: true, onreset: true, onselect: true, onsubmit: true, onload: true, onunload: true,
+				ondrag: true, ondragend: true, ondragenter: true, ondragleave: true, ondragover: true, ondragstart: true, ondrop: true,
+				onerror: true, onmessage: true, onmousewheel: true, onscroll: true, onresize: true, onstorage: true
+			},
+			compatibility: { allBrowsers: true, msg: genCompatibleMsg('iframe') }
+		},
+		img: {
+			attributes: {
+				id: true, class: true, style: true, title: true, alt: true, crossorigin: true,
+				height: true, ismap: true, longdesc: true, src: true, usemap: true, width: true, align: true,
+				border: true, hspace: true, vspace: true
+			},
+			events: {
+				onfocus: true, onblur: true, onabort: true, onchange: true, onbeforeunload: true, onclick: true, ondblclick: true,
+				onkeydown: true, onkeypress: true, onkeyup: true, onmousedown: true, onmouseout: true, onmousemove: true,
+				onmouseover: true, onmouseup: true, onreset: true, onselect: true, onsubmit: true, onload: true, onunload: true,
+				ondrag: true, ondragend: true, ondragenter: true, ondragleave: true, ondragover: true, ondragstart: true, ondrop: true,
+				onerror: true, onmessage: true, onmousewheel: true, onscroll: true, onresize: true, onstorage: true
+			},
+			compatibility: { allBrowsers: true, msg: genCompatibleMsg('img') }
+		},
+		input: {
+			attributes: {
+				id: true, class: true, style: true, title: true, accept: true, alt: true,
+				autocomplete: true, autofocus: true, dirname: true, form: true, formaction: true, formenctype: true,
+				formmethod: true, formnovalidate: true, formtarget: true, height: true, list: true, max: true,
+				maxlength: true, min: true, minlength: true, multiple: true, name: true, pattern: true,
+				placeholder: true, readonly: true, size: true, src: true, step: true, type: true, value: true,
+				width: true, align: true
+			},
+			events: {
+				onfocus: true, onblur: true, onabort: true, onchange: true, onbeforeunload: true, onclick: true, ondblclick: true,
+				onkeydown: true, onkeypress: true, onkeyup: true, onmousedown: true, onmouseout: true, onmousemove: true,
+				onmouseover: true, onmouseup: true, onreset: true, onselect: true, onsubmit: true, onload: true, onunload: true,
+				ondrag: true, ondragend: true, ondragenter: true, ondragleave: true, ondragover: true, ondragstart: true, ondrop: true,
+				onerror: true, onmessage: true, onmousewheel: true, onscroll: true, onresize: true, onstorage: true
+			},
+			compatibility: { allBrowsers: true, msg: genCompatibleMsg('input') }
+		},
+		ins: {
+			attributes: { id: true, class: true, style: true, title: true, cite: true, datetime: true },
+			events: {
+				onfocus: true, onblur: true, onabort: true, onchange: true, onbeforeunload: true, onclick: true, ondblclick: true,
+				onkeydown: true, onkeypress: true, onkeyup: true, onmousedown: true, onmouseout: true, onmousemove: true,
+				onmouseover: true, onmouseup: true, onreset: true, onselect: true, onsubmit: true, onload: true, onunload: true,
+				ondrag: true, ondragend: true, ondragenter: true, ondragleave: true, ondragover: true, ondragstart: true, ondrop: true,
+				onerror: true, onmessage: true, onmousewheel: true, onscroll: true, onresize: true, onstorage: true
+			},
+			compatibility: { allBrowsers: true, msg: genCompatibleMsg('ins') }
+		},
+		isindex: {
+			attributes: { id: true, class: true, style: true, title: true, prompt: true, action: true },
+			events: {},
+			compatibility: { allBrowsers: false, msg: genCompatibleMsg('isindex') }
+		},
+		kbd: {
+			attributes: { id: true, class: true, style: true, title: true },
+			events: {
+				onfocus: true, onblur: true, onabort: true, onchange: true, onbeforeunload: true, onclick: true, ondblclick: true,
+				onkeydown: true, onkeypress: true, onkeyup: true, onmousedown: true, onmouseout: true, onmousemove: true,
+				onmouseover: true, onmouseup: true, onreset: true, onselect: true, onsubmit: true, onload: true, onunload: true,
+				ondrag: true, ondragend: true, ondragenter: true, ondragleave: true, ondragover: true, ondragstart: true, ondrop: true,
+				onerror: true, onmessage: true, onmousewheel: true, onscroll: true, onresize: true, onstorage: true
+			},
+			compatibility: { allBrowsers: true, msg: genCompatibleMsg('kbd') }
+		},
+		keygen: {
+			attributes: {
+				id: true, class: true, style: true, title: true, autofocus: true, challenge: true,
+				disabled: true, form: true, keytype: true, name: true
+			},
+			events: {
+				onfocus: true, onblur: true, onabort: true, onchange: true, onbeforeunload: true, onclick: true, ondblclick: true,
+				onkeydown: true, onkeypress: true, onkeyup: true, onmousedown: true, onmouseout: true, onmousemove: true,
+				onmouseover: true, onmouseup: true, onreset: true, onselect: true, onsubmit: true, onload: true, onunload: true,
+				ondrag: true, ondragend: true, ondragenter: true, ondragleave: true, ondragover: true, ondragstart: true, ondrop: true,
+				onerror: true, onmessage: true, onmousewheel: true, onscroll: true, onresize: true, onstorage: true
+			},
+			compatibility: { allBrowsers: false, msg: genCompatibleMsg('keygen') }
+		},
+		label: {
+			attributes: { id: true, class: true, style: true, title: true, for: true, form: true },
+			events: {
+				onfocus: true, onblur: true, onabort: true, onchange: true, onbeforeunload: true, onclick: true, ondblclick: true,
+				onkeydown: true, onkeypress: true, onkeyup: true, onmousedown: true, onmouseout: true, onmousemove: true,
+				onmouseover: true, onmouseup: true, onreset: true, onselect: true, onsubmit: true, onload: true, onunload: true,
+				ondrag: true, ondragend: true, ondragenter: true, ondragleave: true, ondragover: true, ondragstart: true, ondrop: true,
+				onerror: true, onmessage: true, onmousewheel: true, onscroll: true, onresize: true, onstorage: true
+			},
+			compatibility: { allBrowsers: true, msg: genCompatibleMsg('label') }
+		},
+		legend: {
+			attributes: { id: true, class: true, style: true, title: true, align: true },
+			events: {
+				onfocus: true, onblur: true, onabort: true, onchange: true, onbeforeunload: true, onclick: true, ondblclick: true,
+				onkeydown: true, onkeypress: true, onkeyup: true, onmousedown: true, onmouseout: true, onmousemove: true,
+				onmouseover: true, onmouseup: true, onreset: true, onselect: true, onsubmit: true, onload: true, onunload: true,
+				ondrag: true, ondragend: true, ondragenter: true, ondragleave: true, ondragover: true, ondragstart: true, ondrop: true,
+				onerror: true, onmessage: true, onmousewheel: true, onscroll: true, onresize: true, onstorage: true
+			},
+			compatibility: { allBrowsers: true, msg: genCompatibleMsg('legend') }
+		},
 		//TODO to finish this for all tags
 	};
 
