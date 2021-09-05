@@ -4,7 +4,11 @@
 		return new MTag.init(config);
 	};
 
-	const removedTagsHTML5 = { acronym: true }
+	const removedTagsHTML5 = {
+		acronym: true, applet: true, basefont: true, big: true, center: true, dir: true,
+		font: true, frame: true, frameset: true, isindex: true, noframes: true, strike: true,
+		tt: true
+	}
 
 	//here you can declare data not visible for the outer world because of the closure which hide it.
 	//different information about tags.
@@ -19,7 +23,7 @@
 				onkeypress: true, onkeyup: true, onmousedown: true, onmouseout: true, onmousemove: true,
 				onmouseover: true, onmouseup: true
 			},
-			compatibility: { allBrowsers: true, msg: 'Compatible on all browsers' }
+			compatibility: { allBrowsers: true, msg: genCompatibleMsg('a') }
 		},
 		abbr: {
 			attributes: {
@@ -30,7 +34,7 @@
 				onkeypress: true, onkeyup: true, onmousedown: true, onmouseout: true, onmousemove: true,
 				onmouseover: true, onmouseup: true
 			},
-			compatibility: { allBrowsers: true, msg: 'Compatible on all browsers' }
+			compatibility: { allBrowsers: true, msg: genCompatibleMsg('abbr') }
 		},
 		acronym: {
 			attributes: {
@@ -41,7 +45,30 @@
 				onkeypress: true, onkeyup: true, onmousedown: true, onmouseout: true, onmousemove: true,
 				onmouseover: true, onmouseup: true
 			},
-			compatibility: { allBrowsers: true, msg: 'Compatible on all browsers' }
+			compatibility: { allBrowsers: true, msg: genCompatibleMsg('acronym') }
+		},
+		address: {
+			attributes: {
+				id: true, class: true, style: true, title: true
+			},
+			events: {
+				onfocus: true, onblur: true, onclick: true, ondblclick: true, onkeydown: true,
+				onkeypress: true, onkeyup: true, onmousedown: true, onmouseout: true, onmousemove: true,
+				onmouseover: true, onmouseup: true
+			},
+			compatibility: { allBrowsers: true, msg: genCompatibleMsg('address') }
+		},
+		applet: {
+			attributes: {
+				id: true, class: true, style: true, title: true, code: true, object: true, name: true,
+				height: true, width: true
+			},
+			events: {
+				onfocus: true, onblur: true, onclick: true, ondblclick: true, onkeydown: true,
+				onkeypress: true, onkeyup: true, onmousedown: true, onmouseout: true, onmousemove: true,
+				onmouseover: true, onmouseup: true
+			},
+			compatibility: { allBrowsers: false, msg: genCompatibleMsg('applet') }
 		},
 	};
 
@@ -98,7 +125,7 @@
 
 	const checkIfRemovedInHTML5 = () => {
 		if (showWarnings && currentlyCreatedTagName && removedTagsHTML5[currentlyCreatedTagName]) {
-			const msg = 'Not recommend. The ' + currentlyCreatedTagName + ' tag is removed from HTML 5';
+			const msg = 'Not recommend to use. The ' + currentlyCreatedTagName + ' tag is removed from HTML 5';
 			showWarningMsgOnConsole(msg);
 			return true;
 		}
@@ -144,6 +171,92 @@
 		const { isWarningsOn } = config;
 		//check if the variable exists and if its value is true
 		showWarnings = isVariableExists(isWarningsOn) && isWarningsOn ? true : isWarningsOn;
+	}
+
+	function genCompatibleMsg(tagName) {
+		//This information is valid for year of creating this 2021
+		let msg = 'Compatible on most of the browsers';
+		switch (tagName) {
+			case 'a':
+			case 'abbr':
+			case 'acronym':
+			case 'address':
+			case 'area':
+			case 'article':
+			case 'aside':
+			case 'audio':
+			case 'b':
+			case 'base':
+			case 'bdo':
+			case 'big':
+			case 'blockquote':
+			case 'body':
+			case 'br':
+			case 'button':
+			case 'canvas':
+			case 'caption':
+			case 'center':
+			case 'cite':
+			case 'code':
+			case 'col':
+			case 'colgroup':
+			case 'datagrid':
+			case 'dfn':
+			case 'dd':
+			case 'del':
+			case 'dir':
+			case 'div':
+			case 'dl':
+			case 'dt':
+			case 'em':
+			case 'embed':
+			case 'fieldset':
+			case 'figcaption':
+			case 'figure':
+			case 'font':
+			case 'footer':
+			case 'form':
+			case 'frame':
+			case 'frameset':
+			case 'h1':
+			case 'h2':
+			case 'h3':
+			case 'h4':
+			case 'h5':
+			case 'h6':
+			case 'head':
+			case 'header':
+			case 'hgroup':
+			case 'hr':
+			case 'html':
+			case 'iframe':
+			case 'i':
+			case 'img':
+				//TODO 2
+				return msg;
+			case 'applet':
+				msg = 'Following browsers not support this tag - Chrome, Microsoft Edge, Opera';
+				return msg;
+			case 'basefont':
+			case 'bb':
+			case 'eventsource':
+				msg = 'Not supported in most of the browsers';
+				return msg;
+			case 'command':
+				msg = 'Supported only on Internet Explorer 9';
+				return msg;
+			case 'datalist':
+				msg = 'Not supported on Safari';
+				return msg;
+			case 'details':
+				msg = 'Not supported on Microsoft Edge';
+				return msg;
+			case 'dialog':
+				msg = 'Not supported on Mozilla Firefox, Microsoft Edge and Safari';
+				return msg;
+			default:
+				return msg;
+		}
 	}
 
 	function createTagByConfig(config) {

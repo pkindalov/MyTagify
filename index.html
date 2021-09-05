@@ -46,7 +46,7 @@
 
     const jsonTagExample = mtag.create('acronym').addText('json tag test').addTitle('json tag').getTagJSON();
     const parsedTagFromJSON = mtag.parseTagFromJSON(jsonTagExample);
-    // console.log(typeof parsedTagFromJSON);
+    console.log(parsedTagFromJSON.children);
     mtag.setTagObj(parsedTagFromJSON).appendToBody();
     const paragraph = document.createElement('p');
     paragraph.innerText = 'I am a paragrpah';
