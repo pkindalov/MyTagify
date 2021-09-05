@@ -232,7 +232,61 @@
 			case 'iframe':
 			case 'i':
 			case 'img':
-				//TODO 2
+			case 'input':
+			case 'ins':
+			case 'kbd':
+			case 'label':
+			case 'legend':
+			case 'li':
+			case 'link':
+			case 'map':
+			case 'mark':
+			case 'meta':
+			case 'meter':
+			case 'nav':
+			case 'noframes':
+			case 'noscript':
+			case 'object':
+			case 'ol':
+			case 'optgroup':
+			case 'option':
+			case 'output':
+			case 'p':
+			case 'param':
+			case 'pre':
+			case 'progress':
+			case 'q':
+			case 'rp':
+			case 'rt':
+			case 'ruby':
+			case 's':
+			case 'samp':
+			case 'script':
+			case 'section':
+			case 'select':
+			case 'small':
+			case 'source':
+			case 'span':
+			case 'strike':
+			case 'strong':
+			case 'style':
+			case 'sub':
+			case 'table':
+			case 'tbody':
+			case 'td':
+			case 'textarea':
+			case 'tfoot':
+			case 'th':
+			case 'thead':
+			case 'time':
+			case 'title':
+			case 'tr':
+			case 'tt':
+			case 'u':
+			case 'ul':
+			case 'var':
+			case 'video':
+			case 'wbr':
 				return msg;
 			case 'applet':
 				msg = 'Following browsers not support this tag - Chrome, Microsoft Edge, Opera';
@@ -240,6 +294,9 @@
 			case 'basefont':
 			case 'bb':
 			case 'eventsource':
+			case 'isindex':
+			case 'keygen':
+			case 'track':
 				msg = 'Not supported in most of the browsers';
 				return msg;
 			case 'command':
@@ -253,6 +310,9 @@
 				return msg;
 			case 'dialog':
 				msg = 'Not supported on Mozilla Firefox, Microsoft Edge and Safari';
+				return msg;
+			case 'menu':
+				msg = 'Supported only on Mozilla Firefox';
 				return msg;
 			default:
 				return msg;
