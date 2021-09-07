@@ -1,3 +1,4 @@
+//different information about tags from https://way2tutorial.com/html/tag/reference.php
 function getTagsInfo() {
     return {
         a: {
@@ -950,5 +951,13 @@ function genCompatibleMsg(tagName) {
     }
 }
 
-export { getTagsInfo }
+function getRemovedTags() {
+    return {
+        acronym: true, applet: true, basefont: true, big: true, center: true, dir: true,
+        font: true, frame: true, frameset: true, isindex: true, noframes: true, strike: true,
+        tt: true
+    }
+}
+
+export { getTagsInfo, getRemovedTags }
 

@@ -4,19 +4,12 @@
 		return new MTag.init(config);
 	};
 
-	const removedTagsHTML5 = {
-		acronym: true, applet: true, basefont: true, big: true, center: true, dir: true,
-		font: true, frame: true, frameset: true, isindex: true, noframes: true, strike: true,
-		tt: true
-	}
-	//here you can declare data not visible for the outer world because of the closure which hide it.
-	//different information about tags from https://way2tutorial.com/html/tag/reference.php
-	let tagsInfo = loadTagDataInfo();
+	let removedTagsHTML5 = loadTagDataInfo('removedTags');
+	let tagsInfo = loadTagDataInfo('tagsInfo');
 	let tag = null;
 	let currentlyCreatedTagName = null;
 	let showWarnings = null;
 
-	//small arrow functions
 	const showErrMsgOnConsole = (e) => {
 		const [, lineno, colno] = e.stack.match(/(\d+):(\d+)/);
 		console.log('%c Line: ' + lineno, 'background: red');
@@ -74,12 +67,15 @@
 	};
 
 	const checkIfRemovedInHTML5 = () => {
-		if (showWarnings && currentlyCreatedTagName && removedTagsHTML5[currentlyCreatedTagName]) {
-			const msg = 'Not recommend to use. The ' + currentlyCreatedTagName + ' tag is removed from HTML 5';
-			showWarningMsgOnConsole(msg);
-			return true;
-		}
-		return false;
+		removedTagsHTML5.then(data => {
+			removedTagsHTML5 = data;
+			if (showWarnings && currentlyCreatedTagName && removedTagsHTML5[currentlyCreatedTagName]) {
+				const msg = 'Not recommend to use. The ' + currentlyCreatedTagName + ' tag is removed from HTML 5';
+				showWarningMsgOnConsole(msg);
+				return true;
+			}
+			return false;
+		});
 	}
 
 	const createTagFromString = (str) => {
@@ -125,7 +121,6 @@
 		if (!tag) throw Error('Tag is invalid. You must first create a tag before doing the current operation.');
 	}
 
-	//bigger functions
 	function initializeMainSettings(config) {
 		if (!config) {
 			config = {
@@ -137,13 +132,21 @@
 		showWarnings = isVariableExists(isWarningsOn) && isWarningsOn ? true : isWarningsOn;
 	}
 
-	async function loadTagDataInfo() {
+	async function loadTagDataInfo(whichFnToLoad = 'tagsInfo') {
 		return (async () => {
 			const tagsInfoModuleDir = './TagsData.js';
 			const tagsDataModule = await import(tagsInfoModuleDir);
-			return tagsDataModule.getTagsInfo();
+			switch (whichFnToLoad) {
+				case 'tagsInfo':
+					return tagsDataModule.getTagsInfo();
+				case 'removedTags':
+					return tagsDataModule.getRemovedTags();
+				default:
+					return tagsDataModule.getTagsInfo();
+			}
 
-		})();
+
+		})(whichFnToLoad);
 	}
 
 	function createTagByConfig(config) {
