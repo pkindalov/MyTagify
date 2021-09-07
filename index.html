@@ -19,39 +19,41 @@
     // const mtag = MTag({isWarningsOn: false});
     const mtag = MTag();
     //creating a tag chainable adding different properties one by one
-    mtag
-        .enableWarningMsg(true)
-        .create('a')
-        .addText('rrrr')
-        .addHref('http://graphicsandphotos.com/')
-        .addClass('btn btn-primary')
-        .addStyle({ 'text-decoration': 'none' })
-        .addStyles({ 'color': 'green', 'font-size': '30px', 'background': 'gray' })
-        .addAttributes({ href: 'http://graphicsandphotos.com/', class: 'btn btn-primary', target: '_blank' })
-        .addEvents({ 'onclick': smallTestFunc, 'onfocus': focusTestFunct })
-        .addTitle('My photos and graphics')
-        .addId('graphicsandphotos')
-        .appendToBody();
+    // mtag
+    //     .enableWarningMsg(true)
+    //     .create('a')
+    //     .addText('rrrr')
+    //     .addHref('http://graphicsandphotos.com/')
+    //     .addClass('btn btn-primary')
+    //     .addStyle({ 'text-decoration': 'none' })
+    //     .addStyles({ 'color': 'green', 'font-size': '30px', 'background': 'gray' })
+    //     .addAttributes({ href: 'http://graphicsandphotos.com/', class: 'btn btn-primary', target: '_blank' })
+    //     .addEvents({ 'onclick': smallTestFunc, 'onfocus': focusTestFunct })
+    //     .addTitle('My photos and graphics')
+    //     .addId('graphicsandphotos')
+    //     .appendToBody();
 
-    mtag
-        .create('abbr')
-        .addText('Abbr test')
-        .appendToBody();
+    // mtag
+    //     .create('abbr')
+    //     .addText('Abbr test')
+    //     .appendToBody();
 
-    mtag
-        .create('acronym')
-        .addText('Acronym test')
-        .addTitle('acronym')
-        .changeInnerHTML('<acronym title="Text changed">Changed acronym text for the test</acronym>')
-        .appendMtagToElById('container');
+    // mtag
+    //     .create('acronym')
+    //     .addText('Acronym test')
+    //     .addTitle('acronym')
+    //     .changeInnerHTML('<acronym title="Text changed">Changed acronym text for the test</acronym>')
+    //     .appendMtagToElById('container');
 
-    const jsonTagExample = mtag.create('acronym').addText('json tag test').addTitle('json tag').getTagJSON();
-    const parsedTagFromJSON = mtag.parseTagFromJSON(jsonTagExample);
-    console.log(parsedTagFromJSON.children);
-    mtag.setTagObj(parsedTagFromJSON).appendToBody();
-    const paragraph = document.createElement('p');
-    paragraph.innerText = 'I am a paragrpah';
-    mtag.appendElToContById(paragraph, 'container');
+    // const jsonTagExample = mtag.create('acronym').addText('json tag test').addTitle('json tag').getTagJSON();
+    // const parsedTagFromJSON = mtag.parseTagFromJSON(jsonTagExample);
+    // console.log(parsedTagFromJSON.children);
+    // mtag.setTagObj(parsedTagFromJSON).appendToBody();
+    // const paragraph = document.createElement('p');
+    // paragraph.innerText = 'I am a paragrpah';
+    // mtag.appendElToContById(paragraph, 'container');
+
+
     // console.log(jsonTagExample);
     // console.log(mtag.parseTagFromJSON(jsonTagExample));
     // const link = mtag
@@ -71,19 +73,19 @@
     // document.getElementsByTagName('body')[0].appendChild(link);
 
     //creating a tag with config
-    // mtag
-    // .enableWarningMsg(false)
-    // .create({
-    //     tagName: 'a',
-    //     tagAttr: {href: 'http://graphicsandphotos.com/', target: 'blank', 
-    //               class: 'btn btn-primary', id: 'my web', 'data-target': 'mypage',
-    //               title: 'Works'},
-    //     text: 'My Web',
-    //     events: {'onclick': smallTestFunc, 'onfocus': focusTestFunct},
-    //     inlineCSSstyles: {'font-size': '60px'},
-    //     title: 'Link to cool page'
-    // })
-    // .appendToBody();
+    mtag
+    .enableWarningMsg(false)
+    .create({
+        tagName: 'a',
+        tagAttr: {href: 'http://graphicsandphotos.com/', target: 'blank', 
+                  class: 'btn btn-primary', id: 'my web', 'data-target': 'mypage',
+                  title: 'Works'},
+        text: 'My Web',
+        events: {'onclick': smallTestFunc, 'onfocus': focusTestFunct},
+        inlineCSSstyles: {'font-size': '60px', 'color': 'green', 'text-decoration': 'none'},
+        title: 'Link to cool page'
+    })
+    .appendToBody();
 </script>
 
 </html>
