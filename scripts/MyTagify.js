@@ -1,14 +1,16 @@
 (async function (global) {
 	//returning new function constructor
-	const MTag = function (config = null) {
-		return new MTag.init(config);
+	const MyTagify = function (config = null) {
+		return new MyTagify.init(config);
 	};
 
-	let removedTagsHTML5 = loadTagDataInfo('removedTags');
-	let tagsInfo = loadTagDataInfo('tagsInfo');
-	let tag = null;
-	let currentlyCreatedTagName = null;
-	let showWarnings = null;
+	let that = this;
+	that.removedTagsHTML5 = loadTagDataInfo('removedTags');
+	that.tagsInfo = loadTagDataInfo('tagsInfo');
+	that.tag = null;
+	that.currentlyCreatedTagName = null;
+	that.showWarnings = null;
+	that.tagAttrs = null;
 
 	const showErrMsgOnConsole = (e) => {
 		const [, lineno, colno] = e.stack.match(/(\d+):(\d+)/);
@@ -19,7 +21,7 @@
 	const setTagText = (text = null) => {
 		if (!text) throw Error('Text cannot be invalid value.');
 		tagValidator();
-		tag.innerText = text;
+		that.tag.innerText = text;
 	};
 	const isObject = (variable) => variable && typeof variable === 'object' && variable.constructor === Object;
 	const isDOMElement = (variable) => variable && typeof variable === 'object' && variable.constructor === Element;
@@ -28,49 +30,73 @@
 		return Object.keys(obj).length;
 	};
 	const ifZeroAttributes = (attributes) => getObjectKeysCount(attributes) === 0;
-	const isAttrInTagInfo = (attr) => tagsInfo[currentlyCreatedTagName]['attributes'][attr];
-	const isEventInTagInfo = (event) => tagsInfo[currentlyCreatedTagName]['events'][event];
-	const addAttrsToTag = (attrs) => {
-		if (showWarnings) {
-			tagsInfo.then(data => {
-				tagsInfo = data;
+	const isAttrInTagInfo = (attr, tagName) => that.tagsInfo[tagName]['attributes'][attr];
+	const isEventInTagInfo = (event) => that.tagsInfo[currentlyCreatedTagName]['events'][event];
+	const addAttrsToTag = () => {
+		let attrs = that.tagAttrs;
+		let tag = that.tag;
+		let warnings = that.showWarnings;
+		if (warnings) {
+			if (!isObject(that.tagsInfo)) { //if the tags data is not loaded and it is a promise
+				that.tagsInfo.then(data => {
+					that.tagsInfo = data;
+					if (attrs) {
+						Object.keys(attrs).forEach((attribute) => {
+							if (!isAttrInTagInfo(attribute, tag.tagName.toLowerCase())) {
+								const warnMsg =
+									attribute + ' is not a standart attribute for ' + '<' + tag.tagName + '> tag';
+								showWarningMsgOnConsole(warnMsg);
+							}
+							tag.setAttribute(attribute, attrs[attribute]);
+						});
+					}
+				});
+				return;
+			}
+
+			//if tags data is loaded
+			if (attrs) {
 				Object.keys(attrs).forEach((attribute) => {
-					if (!isAttrInTagInfo(attribute)) {
+					if (!isAttrInTagInfo(attribute, tag.tagName.toLowerCase())) {
 						const warnMsg =
-							attribute + ' is not a standart attribute for ' + '<' + currentlyCreatedTagName + '> tag';
+							attribute + ' is not a standart attribute for ' + '<' + tag.tagName + '> tag';
 						showWarningMsgOnConsole(warnMsg);
 					}
 					tag.setAttribute(attribute, attrs[attribute]);
 				});
-			});
+			}
 			return;
+
 		}
-		Object.keys(attrs).forEach((attribute) => {
-			tag.setAttribute(attribute, attrs[attribute]);
-		});
+
+		if (attrs) {
+			Object.keys(attrs).forEach((attribute) => {
+				tag.setAttribute(attribute, attrs[attribute]);
+			});
+		}
 	};
 	const showWarningMsgOnConsole = (msg) => console.log('%c ' + msg, 'background: yellow;');
 	const isVariableExists = (variable) => typeof variable !== undefined || variable === null;
 	const setWarnings = (turnOnOff) => {
 		if (isVariableExists(turnOnOff)) {
-			showWarnings = turnOnOff;
+			that.showWarnings = turnOnOff;
 		}
 	};
-	const checkBrowserCompatibility = () => {
-		const isCompatible = tagsInfo[currentlyCreatedTagName]['compatibility']['allBrowsers'];
-		if (showWarnings && currentlyCreatedTagName && !isCompatible) {
-			const msg = !tagsInfo[currentlyCreatedTagName]['compatibility']['msg'];
+	const checkBrowserCompatibility = (tagName, warnings) => {
+		const isCompatible = that.tagsInfo[tagName]['compatibility']['allBrowsers'];
+		if (warnings && tagName && !isCompatible) {
+			const msg = !that.tagsInfo[tagName]['compatibility']['msg'];
 			showWarningMsgOnConsole(msg);
 			return false;
 		}
 		return true;
 	};
 
-	const checkIfRemovedInHTML5 = () => {
-		removedTagsHTML5.then(data => {
-			removedTagsHTML5 = data;
-			if (showWarnings && currentlyCreatedTagName && removedTagsHTML5[currentlyCreatedTagName]) {
-				const msg = 'Not recommend to use. The ' + currentlyCreatedTagName + ' tag is removed from HTML 5';
+	const checkIfRemovedInHTML5 = (tagName, warnings) => {
+		that.removedTagsHTML5.then(data => {
+			that.removedTagsHTML5 = data;
+			if (warnings && tagName && that.removedTagsHTML5[tagName]) {
+				const msg = 'Not recommend to use. The ' + tagName + ' tag is removed from HTML 5';
 				showWarningMsgOnConsole(msg);
 				return true;
 			}
@@ -79,20 +105,22 @@
 	}
 
 	const createTagFromString = (str) => {
-		tag = document.createElement(str);
-		currentlyCreatedTagName = str;
-		if (showWarnings) {
-			tagsInfo.then(data => {
-				tagsInfo = data;
-				checkBrowserCompatibility();
-				checkIfRemovedInHTML5();
+		that.tag = document.createElement(str);
+		that.currentlyCreatedTagName = str;
+		let currentTag = that.currentlyCreatedTagName;
+		let warnings = that.showWarnings;
+		if (warnings) {
+			that.tagsInfo.then(data => {
+				that.tagsInfo = data;
+				checkBrowserCompatibility(currentTag, warnings);
+				checkIfRemovedInHTML5(currentTag, warnings);
 			});
 		}
 	};
 
-	const addAttributeToTag = (attr, value) => tag.setAttribute(attr, value);
+	const addAttributeToTag = (attr, value) => that.tag.setAttribute(attr, value);
 	const stringifiedTag = () => {
-		const html = tag.outerHTML;
+		const html = that.tag.outerHTML;
 		const data = { tag: html };
 		const json = JSON.stringify(data)
 		return json;
@@ -102,24 +130,29 @@
 		if (!tagJSONStr) throw Error('Invalid value passed on parseTagFromJSON. Check the passed value again. Cannot be empty, null or undefined');
 		if (!isString(tagJSONStr)) throw Error('Value must be of a type string.');
 		const obj = JSON.parse(tagJSONStr);
-		tag = new DOMParser().parseFromString(obj.tag, "text/xml").firstElementChild;
-		return tag;
+		that.tag = new DOMParser().parseFromString(obj.tag, "text/xml").firstElementChild;
+		return that.tag;
 	}
 	const setTagObj = (outerTag = null) => {
-		// console.log(outerTag.constructor);
 		if (!outerTag || !isDOMElement(outerTag)) throw Error('Inavlid data type.Tag must be ot type object');
-		tag = outerTag;
+		that.tag = outerTag;
 	}
 
 	const changeInnerHTML = (htmlStr = null) => {
 		if (!htmlStr) throw Error('Invalid html string.');
 		tagValidator();
-		tag.innerHTML = htmlStr;
+		that.tag.innerHTML = htmlStr;
 	}
 
 	const tagValidator = () => {
-		if (!tag) throw Error('Tag is invalid. You must first create a tag before doing the current operation.');
+		if (!that.tag) throw Error('Tag is invalid. You must first create a tag before doing the current operation.');
 	}
+
+	// const resetSettings = () => {
+	// 	that.tag = null;
+	// 	that.currentlyCreatedTagName = null;
+	// 	that.tagAttrs = null;
+	// }
 
 	function initializeMainSettings(config) {
 		if (!config) {
@@ -129,7 +162,7 @@
 		}
 		const { isWarningsOn } = config;
 		//check if the variable exists and if its value is true
-		showWarnings = isVariableExists(isWarningsOn) && isWarningsOn ? true : isWarningsOn;
+		that.showWarnings = isVariableExists(isWarningsOn) && isWarningsOn ? true : isWarningsOn;
 	}
 
 	async function loadTagDataInfo(whichFnToLoad = 'tagsInfo') {
@@ -144,26 +177,48 @@
 				default:
 					return tagsDataModule.getTagsInfo();
 			}
-
-
 		})(whichFnToLoad);
 	}
+
+	// const createTagFromString = (str) => {
+	// 	that.tag = document.createElement(str);
+	// 	that.currentlyCreatedTagName = str;
+	// 	let currentTag = that.currentlyCreatedTagName;
+	// 	let warnings = that.showWarnings;
+	// 	if (warnings) {
+	// 		that.tagsInfo.then(data => {
+	// 			that.tagsInfo = data;
+	// 			checkBrowserCompatibility(currentTag);
+	// 			checkIfRemovedInHTML5(currentTag);
+	// 		});
+	// 	}
+	// };
 
 	function createTagByConfig(config) {
 		const { tagName, tagAttr, text, events, inlineCSSstyles, title } = config;
 		if (!tagName) throw Error('Invalid name of tag.');
-		tag = document.createElement(tagName);
-		currentlyCreatedTagName = tagName;
-		tagsInfo.then(data => {
-			tagsInfo = data;
-			if (tagAttr) setTagAttr(tagAttr);
-			if (events) setTagEvents(events);
-			if (text) setTagText(text);
-			if (inlineCSSstyles) addInlineStyles(inlineCSSstyles);
-			if (title) setTitle(title);
-			checkBrowserCompatibility();
-			checkIfRemovedInHTML5();
-		});
+		that.tag = document.createElement(tagName);
+		that.currentlyCreatedTagName = tagName;
+		let currentTag = tagName;
+		let warnings = that.showWarnings;
+		if (warnings) {
+			that.tagsInfo.then(data => {
+				that.tagsInfo = data;
+				if (tagAttr) setTagAttr(tagAttr);
+				if (events) setTagEvents(events);
+				if (text) setTagText(text);
+				if (inlineCSSstyles) addInlineStyles(inlineCSSstyles);
+				if (title) setTitle(title);
+				checkBrowserCompatibility(currentTag, warnings);
+				checkIfRemovedInHTML5(currentTag, warnings);
+			});
+			return;
+		}
+		if (tagAttr) setTagAttr(tagAttr);
+		if (events) setTagEvents(events);
+		if (text) setTagText(text);
+		if (inlineCSSstyles) addInlineStyles(inlineCSSstyles);
+		if (title) setTitle(title);
 	}
 
 	function createNewTag(element) {
@@ -185,30 +240,45 @@
 		if (!attributes) throw Error('Invalid attributes for the tag.');
 		if (!isObject(attributes)) throw Error('Attributes must be an object. Not Array, but an object.');
 		if (ifZeroAttributes(attributes)) return;
-		addAttrsToTag(attributes);
+		that.tagAttrs = attributes;
+		addAttrsToTag();
 	}
 
 	function setTagEvents(events = null) {
+		let warnings = that.showWarnings;
 		if (!isObject(events)) throw Error('events must be object');
 		if (getObjectKeysCount(events) === 0) return;
-		if (showWarnings) {
-			tagsInfo.then(data => {
-				tagsInfo = data;
-				Object.keys(events).forEach((event) => {
-					//check if event exists in tagInfo events for the current tag
-					if (!isEventInTagInfo(event)) {
-						const warnMsg = event + ' is not a standart event for ' + '<' + currentlyCreatedTagName + '> tag';
-						showWarningMsgOnConsole(warnMsg);
-						return;
-					}
-					tag[event] = events[event] ? events[event] : '';
+		if (warnings) {
+			if (!isObject(that.tagsInfo)) {
+				that.tagsInfo.then(data => {
+					that.tagsInfo = data;
+					Object.keys(events).forEach((event) => {
+						//check if event exists in tagInfo events for the current tag
+						if (!isEventInTagInfo(event)) {
+							const warnMsg = event + ' is not a standart event for ' + '<' + that.currentlyCreatedTagName + '> tag';
+							showWarningMsgOnConsole(warnMsg);
+							return;
+						}
+						that.tag[event] = events[event] ? events[event] : '';
+					});
 				});
+				return;
+			}
+
+			Object.keys(events).forEach((event) => {
+				//check if event exists in tagInfo events for the current tag
+				if (!isEventInTagInfo(event)) {
+					const warnMsg = event + ' is not a standart event for ' + '<' + that.currentlyCreatedTagName + '> tag';
+					showWarningMsgOnConsole(warnMsg);
+					return;
+				}
+				that.tag[event] = events[event] ? events[event] : '';
 			});
-			return;
+
 		}
 
 		Object.keys(events).forEach((event) => {
-			tag[event] = events[event] ? events[event] : '';
+			that.tag[event] = events[event] ? events[event] : '';
 		});
 	}
 
@@ -238,7 +308,7 @@
 		if (getObjectKeysCount(cssRule) === 0) throw Error('Empty object is not valid css rule');
 		tagValidator();
 		const ruleKey = Object.keys(cssRule)[0];
-		tag.style[ruleKey] = cssRule[ruleKey] ? cssRule[ruleKey] : '';
+		that.tag.style[ruleKey] = cssRule[ruleKey] ? cssRule[ruleKey] : '';
 	}
 
 	function addInlineStyles(inlineStyles = null) {
@@ -246,41 +316,46 @@
 		tagValidator();
 		Object.keys(inlineStyles).forEach((cssRule) => {
 			if (inlineStyles[cssRule]) {
-				tag.style[cssRule] = inlineStyles[cssRule];
+				that.tag.style[cssRule] = inlineStyles[cssRule];
 			}
 		});
 	}
 
 	function appendTagToHtmlBody() {
 		try {
-			const body = document.getElementsByTagName('body')[0];
+			let body = document.getElementsByTagName('body')[0];
 			if (!body) throw Error('Body tag not found.');
-			if (!tag) throw Error('You must first create a tag, then to append it to body');
-			body.appendChild(tag);
-			return tag;
+			if (!that.tag) throw Error('You must first create a tag, then to append it to body');
+			body.appendChild(that.tag);
+			// return tag;
 		} catch (e) {
 			showErrMsgOnConsole(e);
 		}
 	}
 
-	function appendMtagToElById(elementId) {
+	function appendTagToById(elementId) {
 		if (!elementId) throw Error('elementId is not valid.Cannot be empty, undefined or null');
-		const parentEl = document.getElementById(elementId);
+		let parentEl = document.getElementById(elementId);
 		if (!parentEl) throw Error('Element with id ' + elementId + ' not found');
-		if (!tag) throw Error('You must first create a tag with create command');
-		parentEl.appendChild(tag);
+		if (!that.tag) throw Error('You must first create a tag with create command');
+		parentEl.appendChild(that.tag);
 	}
 
 	function appendElToContById(element, containerId) {
 		if (!element) throw Error('Element is not valid');
 		if (!containerId) throw Error('id of container is not valid');
-		const parentEl = document.getElementById(containerId);
+		let parentEl = document.getElementById(containerId);
 		if (!parentEl) throw Error('Element with id ' + containerId + ' not found');
 		parentEl.appendChild(element);
 	}
 
+	//In function constructor we initialize here all needed variables if there are any.
+	MyTagify.init = function (config = null) {
+		initializeMainSettings(config);
+	};
+
 	//Setting prototype(don't confuse with __proto__ - the prototype of the function. Prototype here point to the function constructor) to be empty object. It contain all custom methods of cutomst library.
-	MTag.prototype = {
+	MyTagify.prototype = {
 		create: function (config) {
 			try {
 				createNewTag(config);
@@ -300,14 +375,14 @@
 		appendToBody: function () {
 			try {
 				appendTagToHtmlBody();
-				return this;
+				return true;
 			} catch (e) {
 				showErrMsgOnConsole(e);
 			}
 		},
-		appendMtagToElById: function (element) {
+		appendTagToById: function (element) {
 			try {
-				appendMtagToElById(element);
+				appendTagToById(element);
 			} catch (e) {
 				showErrMsgOnConsole(e);
 			}
@@ -432,17 +507,13 @@
 		//createBlock: function(arrObj) arrObj - [{tag: 'a', attr: {}, events: {}...}]
 	};
 
-	//In function constructor we initialize here all needed variables if there are any.
-	MTag.init = function (config = null) {
-		initializeMainSettings(config);
-	};
 
-	MTag.init.prototype = MTag.prototype;
+	MyTagify.init.prototype = MyTagify.prototype;
 
 	//Attaching the name of our library to the global object. In that case the possible names to use are
-	//MTag and MT. Example of using the library. You must first include this file in some .html //file and then for example
-	//let MTag = MT(); or let MTag = MTag();
+	//MyTagify and MT. Example of using the library. You must first include this file in some .html //file and then for example
+	//let MyTagify = MT(); or let MyTagify = MyTagify();
 	//Of course you can add more names on the next line with names comfortable for you.
 	//You can see example of using in index.html file
-	global.MTag = global.MT = MTag;
+	global.MyTagify = global.MT = MyTagify;
 })(window);
