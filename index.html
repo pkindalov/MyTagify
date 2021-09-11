@@ -5,47 +5,50 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MTag - Mine Tag - Small library for creating html tags</title>
+    <title>MyTagify - My Tag - Small library for creating html tags</title>
 </head>
 
 <body>
     <div id="container"></div>
 
 </body>
-<script src="./scripts/MTag.js"></script>
+<script src="./scripts/MyTagify.js?x=6"></script>
 <script>
     const smallTestFunc = (event) => event.target.setAttribute('href', 'http://sportal.bg');
     const focusTestFunct = () => console.log('focused');
     // const mtag = MTag({isWarningsOn: false});
-    const mtag = MTag();
+    const mtag = MyTagify();
+    //    console.log(mtag);
     //creating a tag chainable adding different properties one by one
-    // mtag
-    //     .enableWarningMsg(true)
-    //     .create('a')
-    //     .addText('rrrr')
-    //     .addHref('http://graphicsandphotos.com/')
-    //     .addClass('btn btn-primary')
-    //     .addStyle({ 'text-decoration': 'none' })
-    //     .addStyles({ 'color': 'green', 'font-size': '30px', 'background': 'gray' })
-    //     .addAttributes({ href: 'http://graphicsandphotos.com/', class: 'btn btn-primary', target: '_blank' })
-    //     .addEvents({ 'onclick': smallTestFunc, 'onfocus': focusTestFunct })
-    //     .addTitle('My photos and graphics')
-    //     .addId('graphicsandphotos')
-    //     .appendToBody();
+    mtag
+        .enableWarningMsg(true)
+        .create('a')
+        .addText('rrrr')
+        .addHref('http://graphicsandphotos.com/')
+        .addClass('btn btn-primary')
+        .addStyle({ 'text-decoration': 'none' })
+        .addStyles({ 'color': 'green', 'font-size': '30px', 'background': 'gray' })
+        .addAttributes({ href: 'http://graphicsandphotos.com/', class: 'btn btn-primary', target: '_blank'})
+        .addEvents({ 'onclick': smallTestFunc, 'onfocus': focusTestFunct })
+        .addTitle('My photos and graphics')
+        .addId('graphicsandphotos')
+        .appendToBody();
+
 
     // mtag
     //     .enableWarningMsg(true)
     //     .create('abbr')
+    //     .addAttributes({gus: 'кукуууу'})
     //     .addText('Abbr test')
     //     .appendToBody();
 
     mtag
-        // .enableWarningMsg(false)
+        .enableWarningMsg(false)
         .create('acronym')
         .addText('Acronym test')
         .addTitle('acronym')
         .changeInnerHTML('<acronym title="Text changed">Changed acronym text for the test</acronym>')
-        .appendMtagToElById('container');
+        .appendTagToById('container');
 
     // const jsonTagExample = mtag.create('acronym').addText('json tag test').addTitle('json tag').getTagJSON();
     // const parsedTagFromJSON = mtag.parseTagFromJSON(jsonTagExample);
@@ -75,19 +78,19 @@
     // document.getElementsByTagName('body')[0].appendChild(link);
 
     //creating a tag with config
-    // mtag
-    // .enableWarningMsg(false)
-    // .create({
-    //     tagName: 'a',
-    //     tagAttr: {href: 'http://graphicsandphotos.com/', target: 'blank', 
-    //               class: 'btn btn-primary', id: 'my web', 'data-target': 'mypage',
-    //               title: 'Works'},
-    //     text: 'My Web',
-    //     events: {'onclick': smallTestFunc, 'onfocus': focusTestFunct},
-    //     inlineCSSstyles: {'font-size': '60px', 'color': 'green', 'text-decoration': 'none'},
-    //     title: 'Link to cool page'
-    // })
-    // .appendToBody();
+    mtag
+    .enableWarningMsg(true)
+    .create({
+        tagName: 'a',
+        tagAttr: {href: 'http://abv.bg.com/', target: 'blank', 
+                  class: 'btn btn-primary', id: 'my web', 'data-target': 'mypage',
+                  title: 'Works'},
+        text: 'My Web',
+        events: {'onclick': smallTestFunc, 'onfocus': focusTestFunct},
+        inlineCSSstyles: {'font-size': '60px', 'color': 'green', 'text-decoration': 'none'},
+        title: 'Link to cool page'
+    })
+    .appendToBody();
 </script>
 
 </html>
