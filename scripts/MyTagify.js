@@ -8,7 +8,6 @@
 	that.removedTagsHTML5 = loadTagDataInfo('removedTags');
 	that.tagsInfo = loadTagDataInfo('tagsInfo');
 	that.tag = null;
-	that.currentlyCreatedTagName = null;
 	that.showWarnings = null;
 	that.tagAttrs = null;
 
@@ -31,7 +30,7 @@
 	};
 	const ifZeroAttributes = (attributes) => getObjectKeysCount(attributes) === 0;
 	const isAttrInTagInfo = (attr, tagName) => that.tagsInfo[tagName]['attributes'][attr];
-	const isEventInTagInfo = (event) => that.tagsInfo[currentlyCreatedTagName]['events'][event];
+	const isEventInTagInfo = (event, tagName) => that.tagsInfo[tagName]['events'][event];
 	const addAttrsToTag = () => {
 		let attrs = that.tagAttrs;
 		let tag = that.tag;
@@ -106,8 +105,7 @@
 
 	const createTagFromString = (str) => {
 		that.tag = document.createElement(str);
-		that.currentlyCreatedTagName = str;
-		let currentTag = that.currentlyCreatedTagName;
+		let currentTag = that.tag.tagName.toLowerCase();
 		let warnings = that.showWarnings;
 		if (warnings) {
 			that.tagsInfo.then(data => {
@@ -148,12 +146,6 @@
 		if (!that.tag) throw Error('Tag is invalid. You must first create a tag before doing the current operation.');
 	}
 
-	// const resetSettings = () => {
-	// 	that.tag = null;
-	// 	that.currentlyCreatedTagName = null;
-	// 	that.tagAttrs = null;
-	// }
-
 	function initializeMainSettings(config) {
 		if (!config) {
 			config = {
@@ -180,25 +172,10 @@
 		})(whichFnToLoad);
 	}
 
-	// const createTagFromString = (str) => {
-	// 	that.tag = document.createElement(str);
-	// 	that.currentlyCreatedTagName = str;
-	// 	let currentTag = that.currentlyCreatedTagName;
-	// 	let warnings = that.showWarnings;
-	// 	if (warnings) {
-	// 		that.tagsInfo.then(data => {
-	// 			that.tagsInfo = data;
-	// 			checkBrowserCompatibility(currentTag);
-	// 			checkIfRemovedInHTML5(currentTag);
-	// 		});
-	// 	}
-	// };
-
 	function createTagByConfig(config) {
 		const { tagName, tagAttr, text, events, inlineCSSstyles, title } = config;
 		if (!tagName) throw Error('Invalid name of tag.');
 		that.tag = document.createElement(tagName);
-		that.currentlyCreatedTagName = tagName;
 		let currentTag = tagName;
 		let warnings = that.showWarnings;
 		if (warnings) {
@@ -246,6 +223,7 @@
 
 	function setTagEvents(events = null) {
 		let warnings = that.showWarnings;
+		let tagName = that.tag.tagName.toLowerCase();
 		if (!isObject(events)) throw Error('events must be object');
 		if (getObjectKeysCount(events) === 0) return;
 		if (warnings) {
@@ -254,8 +232,8 @@
 					that.tagsInfo = data;
 					Object.keys(events).forEach((event) => {
 						//check if event exists in tagInfo events for the current tag
-						if (!isEventInTagInfo(event)) {
-							const warnMsg = event + ' is not a standart event for ' + '<' + that.currentlyCreatedTagName + '> tag';
+						if (!isEventInTagInfo(event, tagName)) {
+							const warnMsg = event + ' is not a standart event for ' + '<' + tagName + '> tag';
 							showWarningMsgOnConsole(warnMsg);
 							return;
 						}
@@ -267,8 +245,8 @@
 
 			Object.keys(events).forEach((event) => {
 				//check if event exists in tagInfo events for the current tag
-				if (!isEventInTagInfo(event)) {
-					const warnMsg = event + ' is not a standart event for ' + '<' + that.currentlyCreatedTagName + '> tag';
+				if (!isEventInTagInfo(event, tagName)) {
+					const warnMsg = event + ' is not a standart event for ' + '<' + tagName + '> tag';
 					showWarningMsgOnConsole(warnMsg);
 					return;
 				}
