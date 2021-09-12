@@ -30,6 +30,7 @@
 	const ifZeroAttributes = (attrs) => getObjectKeysCount(attrs) === 0;
 	const isAttrInTagInfo = (attr, tagName) => that.tagsInfo[tagName]['attributes'][attr];
 	const isEventInTagInfo = (event, tagName) => that.tagsInfo[tagName]['events'][event];
+
 	const addAttrsToTag = (attrs) => {
 		let tag = that.tag;
 		let warnings = that.showWarnings;
@@ -169,24 +170,18 @@
 		that.tag = document.createElement(tagName);
 		let currentTag = tagName;
 		let warnings = that.showWarnings;
-		if (warnings) {
-			that.tagsInfo.then(data => {
-				that.tagsInfo = data;
-				if (tagAttr) setTagAttr(tagAttr);
-				if (events) setTagEvents(events);
-				if (text) setTagText(text);
-				if (inlineCSSstyles) addInlineStyles(inlineCSSstyles);
-				if (title) setTitle(title);
-				checkBrowserCompatibility(currentTag, warnings);
-				checkIfRemovedInHTML5(currentTag, warnings);
-			});
-			return;
-		}
 		if (tagAttr) setTagAttr(tagAttr);
 		if (events) setTagEvents(events);
 		if (text) setTagText(text);
 		if (inlineCSSstyles) addInlineStyles(inlineCSSstyles);
 		if (title) setTitle(title);
+		if (warnings) {
+			that.tagsInfo.then(data => {
+				that.tagsInfo = data;
+				checkBrowserCompatibility(currentTag, warnings);
+				checkIfRemovedInHTML5(currentTag, warnings);
+			});
+		}
 	}
 
 	function createNewTag(element) {
@@ -220,31 +215,29 @@
 			if (!isObject(that.tagsInfo)) {
 				that.tagsInfo.then(data => {
 					that.tagsInfo = data;
-					Object.keys(events).forEach((event) => {
-						//check if event exists in tagInfo events for the current tag
-						if (!isEventInTagInfo(event, tagName)) {
-							const warnMsg = event + ' is not a standart event for ' + '<' + tagName + '> tag';
-							showWarningMsgOnConsole(warnMsg);
-							return;
-						}
-						that.tag[event] = events[event] ? events[event] : '';
-					});
+					if (events) checkAndPutEventssToTag(events, tagName);
 				});
 				return;
 			}
-
-			Object.keys(events).forEach((event) => {
-				//check if event exists in tagInfo events for the current tag
-				if (!isEventInTagInfo(event, tagName)) {
-					const warnMsg = event + ' is not a standart event for ' + '<' + tagName + '> tag';
-					showWarningMsgOnConsole(warnMsg);
-					return;
-				}
-				that.tag[event] = events[event] ? events[event] : '';
-			});
-
+			if (events) checkAndPutEventssToTag(events, tagName);
+			return;
 		}
+		if (events) putEventsToTag(events);
+	}
 
+	function checkAndPutEventssToTag(events, tagName) {
+		Object.keys(events).forEach((event) => {
+			//check if event exists in tagInfo events for the current tag
+			if (!isEventInTagInfo(event, tagName)) {
+				const warnMsg = event + ' is not a standart event for ' + '<' + tagName + '> tag';
+				showWarningMsgOnConsole(warnMsg);
+				return;
+			}
+			that.tag[event] = events[event] ? events[event] : '';
+		});
+	}
+
+	function putEventsToTag(events) {
 		Object.keys(events).forEach((event) => {
 			that.tag[event] = events[event] ? events[event] : '';
 		});
