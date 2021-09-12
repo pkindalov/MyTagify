@@ -27,52 +27,44 @@
 		if (!isObject(obj)) throw Error('Wrong type. Expect an object, not an array or something else.');
 		return Object.keys(obj).length;
 	};
-	const ifZeroAttributes = (attributes) => getObjectKeysCount(attributes) === 0;
+	const ifZeroAttributes = (attrs) => getObjectKeysCount(attrs) === 0;
 	const isAttrInTagInfo = (attr, tagName) => that.tagsInfo[tagName]['attributes'][attr];
 	const isEventInTagInfo = (event, tagName) => that.tagsInfo[tagName]['events'][event];
 	const addAttrsToTag = (attrs) => {
-		// let attrs = attributes;
 		let tag = that.tag;
 		let warnings = that.showWarnings;
 		if (warnings) {
 			if (!isObject(that.tagsInfo)) { //if the tags data is not loaded and it is a promise
 				that.tagsInfo.then(data => {
 					that.tagsInfo = data;
-					if (attrs) {
-						Object.keys(attrs).forEach((attribute) => {
-							if (!isAttrInTagInfo(attribute, tag.tagName.toLowerCase())) {
-								const warnMsg =
-									attribute + ' is not a standart attribute for ' + '<' + tag.tagName + '> tag';
-								showWarningMsgOnConsole(warnMsg);
-							}
-							tag.setAttribute(attribute, attrs[attribute]);
-						});
-					}
+					if (attrs) checkAndPutAttrsToTag(attrs, tag.tagName.toLowerCase());
 				});
 				return;
 			}
-
 			//if tags data is loaded
-			if (attrs) {
-				Object.keys(attrs).forEach((attribute) => {
-					if (!isAttrInTagInfo(attribute, tag.tagName.toLowerCase())) {
-						const warnMsg =
-							attribute + ' is not a standart attribute for ' + '<' + tag.tagName + '> tag';
-						showWarningMsgOnConsole(warnMsg);
-					}
-					tag.setAttribute(attribute, attrs[attribute]);
-				});
-			}
+			if (attrs) checkAndPutAttrsToTag(attrs, tag.tagName.toLowerCase());
 			return;
-
 		}
-
-		if (attrs) {
-			Object.keys(attrs).forEach((attribute) => {
-				tag.setAttribute(attribute, attrs[attribute]);
-			});
-		}
+		if (attrs) putAttrsToTag(attrs);	//if warnings are not turned on, just add attributes to tag		
 	};
+
+	const checkAndPutAttrsToTag = (attrs, tagName) => {
+		Object.keys(attrs).forEach((attribute) => {
+			if (!isAttrInTagInfo(attribute, tagName)) {
+				const warnMsg =
+					attribute + ' is not a standart attribute for ' + '<' + tagName + '> tag';
+				showWarningMsgOnConsole(warnMsg);
+			}
+			tag.setAttribute(attribute, attrs[attribute]);
+		});
+	}
+
+	const putAttrsToTag = (attrs) => {
+		Object.keys(attrs).forEach((attribute) => {
+			tag.setAttribute(attribute, attrs[attribute]);
+		});
+	}
+
 	const showWarningMsgOnConsole = (msg) => console.log('%c ' + msg, 'background: yellow;');
 	const isVariableExists = (variable) => typeof variable !== undefined || variable === null;
 	const setWarnings = (turnOnOff) => {
