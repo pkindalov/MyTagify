@@ -19,7 +19,8 @@
 	const setTagText = (text = null) => {
 		if (!text) throw Error('Text cannot be invalid value.');
 		tagValidator();
-		that.tag.innerText = text;
+		let tag = that.tag;
+		tag.innerText = text;
 	};
 	const isObject = (variable) => variable && typeof variable === 'object' && variable.constructor === Object;
 	const isDOMElement = (variable) => variable && typeof variable === 'object' && variable.constructor === Element;
@@ -32,6 +33,7 @@
 	const isEventInTagInfo = (event, tagName) => that.tagsInfo[tagName]['events'][event];
 
 	const addAttrsToTag = (attrs) => {
+		tagValidator();
 		let tag = that.tag;
 		let warnings = that.showWarnings;
 		if (warnings) {
@@ -108,7 +110,11 @@
 		}
 	};
 
-	const addAttributeToTag = (attr, value) => that.tag.setAttribute(attr, value);
+	const addAttributeToTag = (attr, value) => {
+		tagValidator();
+		let tag = that.tag;
+		tag.setAttribute(attr, value);
+	}
 	const stringifiedTag = () => {
 		const html = that.tag.outerHTML;
 		const data = { tag: html };
@@ -207,8 +213,10 @@
 	}
 
 	function setTagEvents(events = null) {
+		tagValidator();
 		let warnings = that.showWarnings;
-		let tagName = that.tag.tagName.toLowerCase();
+		let tag = that.tag;
+		let tagName = tag.tagName.toLowerCase();
 		if (!isObject(events)) throw Error('events must be object');
 		if (getObjectKeysCount(events) === 0) return;
 		if (warnings) {
@@ -269,15 +277,21 @@
 		if (getObjectKeysCount(cssRule) === 0) throw Error('Empty object is not valid css rule');
 		tagValidator();
 		const ruleKey = Object.keys(cssRule)[0];
-		that.tag.style[ruleKey] = cssRule[ruleKey] ? cssRule[ruleKey] : '';
+		let tag = that.tag;
+		tag.style[ruleKey] = cssRule[ruleKey] ? cssRule[ruleKey] : '';
 	}
 
 	function addInlineStyles(inlineStyles = null) {
 		if (!isObject(inlineStyles)) throw Error('styles must be object');
 		tagValidator();
+		let tag = that.tag;
+		appendInlineCSSstylesToTag(inlineStyles, tag);
+	}
+
+	const appendInlineCSSstylesToTag = (inlineStyles, tag) => {
 		Object.keys(inlineStyles).forEach((cssRule) => {
 			if (inlineStyles[cssRule]) {
-				that.tag.style[cssRule] = inlineStyles[cssRule];
+				tag.style[cssRule] = inlineStyles[cssRule];
 			}
 		});
 	}
@@ -287,8 +301,8 @@
 			let body = document.getElementsByTagName('body')[0];
 			if (!body) throw Error('Body tag not found.');
 			if (!that.tag) throw Error('You must first create a tag, then to append it to body');
-			body.appendChild(that.tag);
-			// return tag;
+			let tag = that.tag;
+			body.appendChild(tag);
 		} catch (e) {
 			showErrMsgOnConsole(e);
 		}
@@ -299,7 +313,8 @@
 		let parentEl = document.getElementById(elementId);
 		if (!parentEl) throw Error('Element with id ' + elementId + ' not found');
 		if (!that.tag) throw Error('You must first create a tag with create command');
-		parentEl.appendChild(that.tag);
+		let tag = that.tag;
+		parentEl.appendChild(tag);
 	}
 
 	function appendElToContById(element, containerId) {
@@ -316,6 +331,8 @@
 	};
 
 	//Setting prototype(don't confuse with __proto__ - the prototype of the function. Prototype here point to the function constructor) to be empty object. It contain all custom methods of cutomst library.
+
+	//TODO all functions start here
 	MyTagify.prototype = {
 		create: function (config) {
 			try {
@@ -405,6 +422,7 @@
 		},
 		addStyles: function (rules) {
 			try {
+				//TODO 2 - here
 				addInlineStyles(rules);
 				return this;
 			} catch (e) {
