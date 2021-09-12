@@ -116,7 +116,9 @@
 		tag.setAttribute(attr, value);
 	}
 	const stringifiedTag = () => {
-		const html = that.tag.outerHTML;
+		tagValidator();
+		const tag = that.tag;
+		const html = tag.outerHTML;
 		const data = { tag: html };
 		const json = JSON.stringify(data)
 		return json;
@@ -126,8 +128,9 @@
 		if (!tagJSONStr) throw Error('Invalid value passed on parseTagFromJSON. Check the passed value again. Cannot be empty, null or undefined');
 		if (!isString(tagJSONStr)) throw Error('Value must be of a type string.');
 		const obj = JSON.parse(tagJSONStr);
-		that.tag = new DOMParser().parseFromString(obj.tag, "text/xml").firstElementChild;
-		return that.tag;
+		let tag = that.tag;
+		tag = new DOMParser().parseFromString(obj.tag, "text/xml").firstElementChild;
+		return tag;
 	}
 	const setTagObj = (outerTag = null) => {
 		if (!outerTag || !isDOMElement(outerTag)) throw Error('Inavlid data type.Tag must be ot type object');
@@ -422,7 +425,6 @@
 		},
 		addStyles: function (rules) {
 			try {
-				//TODO 2 - here
 				addInlineStyles(rules);
 				return this;
 			} catch (e) {
@@ -447,7 +449,7 @@
 		},
 		getTag: function () {
 			try {
-				return tag;
+				return that.tag;
 			} catch (e) {
 				showErrMsgOnConsole(e);
 			}
