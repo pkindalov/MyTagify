@@ -9,7 +9,6 @@
 	that.tagsInfo = loadTagDataInfo('tagsInfo');
 	that.tag = null;
 	that.showWarnings = null;
-	that.tagAttrs = null;
 
 	const showErrMsgOnConsole = (e) => {
 		const [, lineno, colno] = e.stack.match(/(\d+):(\d+)/);
@@ -31,8 +30,8 @@
 	const ifZeroAttributes = (attributes) => getObjectKeysCount(attributes) === 0;
 	const isAttrInTagInfo = (attr, tagName) => that.tagsInfo[tagName]['attributes'][attr];
 	const isEventInTagInfo = (event, tagName) => that.tagsInfo[tagName]['events'][event];
-	const addAttrsToTag = () => {
-		let attrs = that.tagAttrs;
+	const addAttrsToTag = (attrs) => {
+		// let attrs = attributes;
 		let tag = that.tag;
 		let warnings = that.showWarnings;
 		if (warnings) {
@@ -217,8 +216,7 @@
 		if (!attributes) throw Error('Invalid attributes for the tag.');
 		if (!isObject(attributes)) throw Error('Attributes must be an object. Not Array, but an object.');
 		if (ifZeroAttributes(attributes)) return;
-		that.tagAttrs = attributes;
-		addAttrsToTag();
+		addAttrsToTag(attributes);
 	}
 
 	function setTagEvents(events = null) {
