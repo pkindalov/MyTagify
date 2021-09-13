@@ -38,7 +38,7 @@
     mtag
         // .enableWarningMsg(false)
         .create('abbr')
-        .addAttributes({ gus: 'кукуууу' })
+        .addAttributes({ notexists: 'test' })
         .addText('Abbr test')
         .appendToBody();
 
@@ -48,7 +48,7 @@
         .addText('Acronym test')
         .addTitle('acronym')
         // .addAttributes({notexist: 'test'})
-        .changeInnerHTML('<acronym NOTEXISTS="sdfsd" title="Text changed">Changed acronym text for the test</acronym>')
+        .changeInnerHTML('<acronym NOTEXISTS="test" title="Text changed">Changed acronym text for the test</acronym>')
         .appendTagToById('container');
 
     mtag
