@@ -4,11 +4,11 @@
 		return new MyTagify.init(config);
 	};
 
-	let that = this;
-	that.removedTagsHTML5 = loadTagDataInfo('removedTags');
-	that.tagsInfo = loadTagDataInfo('tagsInfo');
-	that.tag = null;
-	that.showWarnings = null;
+	// let that = this;
+	removedTagsHTML5 = loadTagDataInfo('removedTags');
+	tagsInfo = loadTagDataInfo('tagsInfo');
+	tag = null;
+	showWarnings = null;
 
 	const showErrMsgOnConsole = (e) => {
 		const [, lineno, colno] = e.stack.match(/(\d+):(\d+)/);
@@ -18,8 +18,8 @@
 	};
 	const setTagText = (text = null) => {
 		if (!text) throw Error('Text cannot be invalid value.');
-		tagValidator();
-		let tag = that.tag;
+		if (!tagValidator()) return;
+		// let tag = tag;
 		tag.innerText = text;
 	};
 	const isObject = (variable) => variable && typeof variable === 'object' && variable.constructor === Object;
@@ -29,26 +29,32 @@
 		return Object.keys(obj).length;
 	};
 	const ifZeroAttributes = (attrs) => getObjectKeysCount(attrs) === 0;
-	const isAttrInTagInfo = (attr, tagName) => that.tagsInfo[tagName]['attributes'][attr];
-	const isEventInTagInfo = (event, tagName) => that.tagsInfo[tagName]['events'][event];
+	const isAttrInTagInfo = (attr, tagName) => tagsInfo[tagName]['attributes'][attr];
+	const isEventInTagInfo = (event, tagName) => tagsInfo[tagName]['events'][event];
 
 	const addAttrsToTag = (attrs) => {
-		tagValidator();
-		let tag = that.tag;
-		let warnings = that.showWarnings;
+
+		if (!tagValidator()) return;
+		let newTagWithoutAttrs = document.createElement(tag.nodeName.toLowerCase());
+		let warnings = showWarnings;
 		if (warnings) {
-			if (!isObject(that.tagsInfo)) { //if the tags data is not loaded and it is a promise
-				that.tagsInfo.then(data => {
-					that.tagsInfo = data;
+			if (!isObject(tagsInfo)) { //if the tags data is not loaded and it is a promise
+				tagsInfo.then(data => {
+					tagsInfo = data;
+					tag = newTagWithoutAttrs;
+					tag.attributes = newTagWithoutAttrs;
 					if (attrs) checkAndPutAttrsToTag(attrs, tag.tagName.toLowerCase());
 				});
 				return;
 			}
 			//if tags data is loaded
+			tag = newTagWithoutAttrs;
+			tag.attributes = newTagWithoutAttrs;
 			if (attrs) checkAndPutAttrsToTag(attrs, tag.tagName.toLowerCase());
 			return;
 		}
-		if (attrs) putAttrsToTag(attrs);	//if warnings are not turned on, just add attributes to tag		
+
+		if (attrs) putAttrsToTag(attrs);	//if warnings are not turned on, just add attributes to tag	
 	};
 
 	const checkAndPutAttrsToTag = (attrs, tagName) => {
@@ -72,13 +78,15 @@
 	const isVariableExists = (variable) => typeof variable !== undefined || variable === null;
 	const setWarnings = (turnOnOff) => {
 		if (isVariableExists(turnOnOff)) {
-			that.showWarnings = turnOnOff;
+			showWarnings = turnOnOff;
+			return;
 		}
+		showWarnings = true;
 	};
 	const checkBrowserCompatibility = (tagName, warnings) => {
-		const isCompatible = that.tagsInfo[tagName]['compatibility']['allBrowsers'];
+		const isCompatible = tagsInfo[tagName]['compatibility']['allBrowsers'];
 		if (warnings && tagName && !isCompatible) {
-			const msg = !that.tagsInfo[tagName]['compatibility']['msg'];
+			const msg = !tagsInfo[tagName]['compatibility']['msg'];
 			showWarningMsgOnConsole(msg);
 			return false;
 		}
@@ -86,9 +94,9 @@
 	};
 
 	const checkIfRemovedInHTML5 = (tagName, warnings) => {
-		that.removedTagsHTML5.then(data => {
-			that.removedTagsHTML5 = data;
-			if (warnings && tagName && that.removedTagsHTML5[tagName]) {
+		removedTagsHTML5.then(data => {
+			removedTagsHTML5 = data;
+			if (warnings && tagName && removedTagsHTML5[tagName]) {
 				const msg = 'Not recommend to use. The ' + tagName + ' tag is removed from HTML 5';
 				showWarningMsgOnConsole(msg);
 				return true;
@@ -98,12 +106,12 @@
 	}
 
 	const createTagFromString = (str) => {
-		that.tag = document.createElement(str);
-		let currentTag = that.tag.tagName.toLowerCase();
-		let warnings = that.showWarnings;
+		tag = document.createElement(str);
+		let currentTag = tag.tagName.toLowerCase();
+		let warnings = showWarnings;
 		if (warnings) {
-			that.tagsInfo.then(data => {
-				that.tagsInfo = data;
+			tagsInfo.then(data => {
+				tagsInfo = data;
 				checkBrowserCompatibility(currentTag, warnings);
 				checkIfRemovedInHTML5(currentTag, warnings);
 			});
@@ -111,13 +119,13 @@
 	};
 
 	const addAttributeToTag = (attr, value) => {
-		tagValidator();
-		let tag = that.tag;
+		if (!tagValidator()) return;
+		// let tag = tag;
 		tag.setAttribute(attr, value);
 	}
 	const stringifiedTag = () => {
-		tagValidator();
-		const tag = that.tag;
+		if (!tagValidator()) return;
+		const tag = tag;
 		const html = tag.outerHTML;
 		const data = { tag: html };
 		const json = JSON.stringify(data)
@@ -128,23 +136,27 @@
 		if (!tagJSONStr) throw Error('Invalid value passed on parseTagFromJSON. Check the passed value again. Cannot be empty, null or undefined');
 		if (!isString(tagJSONStr)) throw Error('Value must be of a type string.');
 		const obj = JSON.parse(tagJSONStr);
-		let tag = that.tag;
+		// let tag = tag;
 		tag = new DOMParser().parseFromString(obj.tag, "text/xml").firstElementChild;
 		return tag;
 	}
 	const setTagObj = (outerTag = null) => {
 		if (!outerTag || !isDOMElement(outerTag)) throw Error('Inavlid data type.Tag must be ot type object');
-		that.tag = outerTag;
+		tag = outerTag;
 	}
 
 	const changeInnerHTML = (htmlStr = null) => {
 		if (!htmlStr) throw Error('Invalid html string.');
-		tagValidator();
-		that.tag.innerHTML = htmlStr;
+		if (!tagValidator()) return;
+		tag.innerHTML = htmlStr;
 	}
 
 	const tagValidator = () => {
-		if (!that.tag) throw Error('Tag is invalid. You must first create a tag before doing the current operation.');
+		if (!tag) {
+			throw Error('Tag is invalid. You must first create a tag before doing the current operation.');
+			return false;
+		}
+		return true;
 	}
 
 	function initializeMainSettings(config) {
@@ -155,7 +167,7 @@
 		}
 		const { isWarningsOn } = config;
 		//check if the variable exists and if its value is true
-		that.showWarnings = isVariableExists(isWarningsOn) && isWarningsOn ? true : isWarningsOn;
+		showWarnings = isVariableExists(isWarningsOn) && isWarningsOn ? true : isWarningsOn;
 	}
 
 	async function loadTagDataInfo(whichFnToLoad = 'tagsInfo') {
@@ -176,19 +188,18 @@
 	function createTagByConfig(config) {
 		const { tagName, tagAttr, text, events, inlineCSSstyles, title } = config;
 		if (!tagName) throw Error('Invalid name of tag.');
-		that.tag = document.createElement(tagName);
+		tag = document.createElement(tagName);
 		let currentTag = tagName;
-		let warnings = that.showWarnings;
 		if (tagAttr) setTagAttr(tagAttr);
 		if (events) setTagEvents(events);
 		if (text) setTagText(text);
 		if (inlineCSSstyles) addInlineStyles(inlineCSSstyles);
 		if (title) setTitle(title);
-		if (warnings) {
-			that.tagsInfo.then(data => {
-				that.tagsInfo = data;
-				checkBrowserCompatibility(currentTag, warnings);
-				checkIfRemovedInHTML5(currentTag, warnings);
+		if (showWarnings) {
+			tagsInfo.then(data => {
+				tagsInfo = data;
+				checkBrowserCompatibility(currentTag, showWarnings);
+				checkIfRemovedInHTML5(currentTag, showWarnings);
 			});
 		}
 	}
@@ -216,16 +227,16 @@
 	}
 
 	function setTagEvents(events = null) {
-		tagValidator();
-		let warnings = that.showWarnings;
-		let tag = that.tag;
+		if (!tagValidator()) return;
+		let warnings = showWarnings;
+		// let tag = tag;
 		let tagName = tag.tagName.toLowerCase();
 		if (!isObject(events)) throw Error('events must be object');
 		if (getObjectKeysCount(events) === 0) return;
 		if (warnings) {
-			if (!isObject(that.tagsInfo)) {
-				that.tagsInfo.then(data => {
-					that.tagsInfo = data;
+			if (!isObject(tagsInfo)) {
+				tagsInfo.then(data => {
+					tagsInfo = data;
 					if (events) checkAndPutEventssToTag(events, tagName);
 				});
 				return;
@@ -237,6 +248,7 @@
 	}
 
 	function checkAndPutEventssToTag(events, tagName) {
+		if (!tagValidator || !tagName) return;
 		Object.keys(events).forEach((event) => {
 			//check if event exists in tagInfo events for the current tag
 			if (!isEventInTagInfo(event, tagName)) {
@@ -244,13 +256,13 @@
 				showWarningMsgOnConsole(warnMsg);
 				return;
 			}
-			that.tag[event] = events[event] ? events[event] : '';
+			if (tag) tag[event] = events[event] ? events[event] : '';
 		});
 	}
 
 	function putEventsToTag(events) {
 		Object.keys(events).forEach((event) => {
-			that.tag[event] = events[event] ? events[event] : '';
+			tag[event] = events[event] ? events[event] : '';
 		});
 	}
 
@@ -278,16 +290,16 @@
 		if (!cssRule) throw Error('Invalid css rule');
 		if (!isObject(cssRule)) throw Error('Invalid data type.css rule must be of type object');
 		if (getObjectKeysCount(cssRule) === 0) throw Error('Empty object is not valid css rule');
-		tagValidator();
+		if (!tagValidator()) return;
 		const ruleKey = Object.keys(cssRule)[0];
-		let tag = that.tag;
+		// let tag = tag;
 		tag.style[ruleKey] = cssRule[ruleKey] ? cssRule[ruleKey] : '';
 	}
 
 	function addInlineStyles(inlineStyles = null) {
 		if (!isObject(inlineStyles)) throw Error('styles must be object');
-		tagValidator();
-		let tag = that.tag;
+		if (!tagValidator()) return;
+		// let tag = tag;
 		appendInlineCSSstylesToTag(inlineStyles, tag);
 	}
 
@@ -303,9 +315,10 @@
 		try {
 			let body = document.getElementsByTagName('body')[0];
 			if (!body) throw Error('Body tag not found.');
-			if (!that.tag) throw Error('You must first create a tag, then to append it to body');
-			let tag = that.tag;
+			if (!tag) throw Error('You must first create a tag, then to append it to body');
+			// let tag = tag;
 			body.appendChild(tag);
+			tag = null; //TODO reset 1
 		} catch (e) {
 			showErrMsgOnConsole(e);
 		}
@@ -315,9 +328,10 @@
 		if (!elementId) throw Error('elementId is not valid.Cannot be empty, undefined or null');
 		let parentEl = document.getElementById(elementId);
 		if (!parentEl) throw Error('Element with id ' + elementId + ' not found');
-		if (!that.tag) throw Error('You must first create a tag with create command');
-		let tag = that.tag;
+		if (!tag) throw Error('You must first create a tag with create command');
+		// let tag = tag;
 		parentEl.appendChild(tag);
+		tag = null; //TODO reset 2
 	}
 
 	function appendElToContById(element, containerId) {
@@ -449,7 +463,7 @@
 		},
 		getTag: function () {
 			try {
-				return that.tag;
+				return tag;
 			} catch (e) {
 				showErrMsgOnConsole(e);
 			}

@@ -17,89 +17,71 @@
     const smallTestFunc = (event) => event.target.setAttribute('href', 'http://sportal.bg');
     const focusTestFunct = () => console.log('focused');
     // const mtag = MTag({isWarningsOn: false});
-    const mtag = MyTagify();
+    const mtag = MyTagify({isWarningsOn: true});
     //    console.log(mtag);
     //creating a tag chainable adding different properties one by one
     mtag
-        // .enableWarningMsg(false)
+        .enableWarningMsg(false)
         .create('a')
-        .addText('rrrr')
-        .addHref('http://graphicsandphotos.com/')
-        .addClass('btn btn-primary')
+        .addText('first link2')
+        .addHref('http://abv.bg/')
+        .addClass('btn btn-secondary')
         .addStyle({ 'text-decoration': 'none' })
-        .addStyles({ 'color': 'green', 'font-size': '30px', 'background': 'gray' })
+        .addStyles({ 'color': 'blue', 'font-size': '30px', 'background': 'gray' })
         .addAttributes({ href: 'http://graphicsandphotos.com/', class: 'btn btn-primary', target: '_blank' })
-        .addEvents({ 'onclick': smallTestFunc, 'onfocus': focusTestFunct })
-        .addTitle('My photos and graphics')
-        .addId('graphicsandphotos')
+        // .addEvents({ 'onclick': smallTestFunc, 'onfocus': focusTestFunct })
+        .addTitle('dont use  them')
+        .addId('abv.bg')
         .appendToBody();
 
 
     mtag
-        // .enableWarningMsg(false)
+        .enableWarningMsg(false)
         .create('abbr')
-        .addAttributes({ notexists: 'test' })
+        .addAttributes({ notexists: 'test', class: 'test' })
         .addText('Abbr test')
         .appendToBody();
 
     mtag
-        // .enableWarningMsg(false)
+        .enableWarningMsg(false)
         .create('acronym')
         .addText('Acronym test')
         .addTitle('acronym')
-        // .addAttributes({notexist: 'test'})
-        .changeInnerHTML('<acronym NOTEXISTS="test" title="Text changed">Changed acronym text for the test</acronym>')
+        .addAttributes({ notexist: 'test' })
+        // .changeInnerHTML('<acronym NOTEXISTS="test" title="Text changed">Changed acronym text for the test</acronym>')
         .appendTagToById('container');
 
     mtag
-        // .enableWarningMsg(false)
+        .enableWarningMsg(false)
         .create({
             tagName: 'a',
             tagAttr: {
                 href: 'http://abv.bg.com/', target: 'blank',
-                class: 'btn btn-primary', id: 'my web', 'data-target': 'mypage',
-                title: 'Works'
+                class: 'btn btn-secondary', id: 'my web2', 'data-target': 'mypage',
+                title: 'Works', kukuu: ''
             },
-            text: 'My Web',
+            text: 'My Web2',
             events: { 'onclick': smallTestFunc, 'onfocus': focusTestFunct },
             inlineCSSstyles: { 'font-size': '60px', 'color': 'green', 'text-decoration': 'none' },
             title: 'Link to cool page'
         })
         .appendToBody();
 
-    // const jsonTagExample = mtag.create('acronym').addText('json tag test').addTitle('json tag').getTagJSON();
-    // console.log('-----------------------');
-    // console.log(jsonTagExample);
-    // const parsedTagFromJSON = mtag.parseTagFromJSON(jsonTagExample);
-    // console.log(parsedTagFromJSON);
-
-
-    // console.log(parsedTagFromJSON.children);
-    // mtag.setTagObj(parsedTagFromJSON).appendToBody();
-    // const paragraph = document.createElement('p');
-    // paragraph.innerText = 'I am a paragrpah';
-    // mtag.appendElToContById(paragraph, 'container');
-
-
-    // console.log(jsonTagExample);
-    // console.log(mtag.parseTagFromJSON(jsonTagExample));
-    // const link = mtag
-    //             .enableWarningMsg(true)
-    //             .create('a')
-    //             .addText('rrrr')
-    //             .addHref('http://graphicsandphotos.com/')
-    //             .addClass('btn btn-primary')
-    //             .addStyle({ 'text-decoration': 'none' })
-    //             .addStyles({ 'color': 'green', 'font-size': '30px', 'background': 'gray' })
-    //             .addAttributes({ href: 'http://graphicsandphotos.com/', class: 'btn btn-primary', target: '_blank' })
-    //             .addEvents({ 'onclick': smallTestFunc, 'onfocus': focusTestFunct, 'notExistsEvent': 'sdfsdf' })
-    //              .addTitle('My photos and graphics')
-                    // .addId('graphicsandphotos')
-    //             .getTag();
-    // console.log(link);        
-    // document.getElementsByTagName('body')[0].appendChild(link);
-
-    //creating a tag with config
+    const link = mtag
+        .enableWarningMsg(false)
+        .create('a')
+        .addText('rrrr')
+        .addHref('http://graphicsandphotos.com/')
+        .addClass('btn btn-primary')
+        .addStyle({ 'text-decoration': 'none' })
+        .addStyles({ 'color': 'green', 'font-size': '30px', 'background': 'gray' })
+        .addAttributes({ href: 'http://graphicsandphotos.com/', class: 'btn btn-primary', target: '_blank', yep: '' })
+        .addEvents({ 'onclick': smallTestFunc, 'onfocus': focusTestFunct, 'notExistsEvent': 'sdfsdf' })
+        .addTitle('My photos and graphics')
+        .addId('graphicsandphotos')
+        .getTag();
+    document.getElementsByTagName('body')[0].appendChild(link);
+    document.getElementById('container').appendChild(link);
 </script>
 
 </html>
